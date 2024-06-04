@@ -35,7 +35,7 @@ export default async function Dashboard() {
           </div>
         )}
         <div className="mb-10">
-          <h2 className="text-15-grey mb-5">Overview Check</h2>
+          <h2 className="text-15-grey mb-5">Overview Checks For You</h2>
           <div className="grid grid-cols-6 gap-x-7">
             <Card
               name="Articles"
@@ -82,11 +82,7 @@ export default async function Dashboard() {
           </div>
         </div>
         <div>
-<<<<<<< HEAD
-          <h2 className="text-15-grey mb-5">Activities</h2>
-=======
-          <h2 className="text-15-grey mb-5">All of your Activities</h2>
->>>>>>> 70801b40c1fb983368d800a24c51a2ebe03f73fa
+          <h2 className="text-15-grey mb-5">Activities To Check</h2>
           <Table />
         </div>
       </main>

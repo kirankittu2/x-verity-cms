@@ -15,6 +15,7 @@ import { sendEmail, sendmail } from "./mail";
 import { get, set } from "./session-store";
 import { redirect } from "next/navigation";
 import bcrypt from "bcrypt";
+import exec from "child_process";
 
 export async function authenticate(prevState, formData) {
   try {
@@ -48,75 +49,89 @@ export async function createCategory(formData) {
 }
 
 export async function updateCMS(formData) {
-  const version = await newVersionCheck();
-  const response = await fetch(`http://localhost:3004/zip/${version}`);
-  const arrayBuffer = await response.arrayBuffer();
-  const zipBuffer = Buffer.from(arrayBuffer);
-  const tempExtractPath = path.join(process.cwd(), "temp_extracted");
-  const backups = path.join(process.cwd(), "backups");
-  const nextFolderPath = path.join(process.cwd(), ".next");
-  try {
-    await isUpdated("1");
-
-    if (!existsSync(backups)) {
-      fs.promises.mkdir(backups);
+  exec("./update.sh", (error, stdout, stderr) => {
+    if (error) {
+      console.error(`Error executing script: ${error}`);
+      return res
+        .status(500)
+        .json({ success: false, message: "Update failed!" });
     }
-    const currentDateFolder = path.join(backups, getCurrentDate());
-
-    await fss
-      .ensureDir(currentDateFolder)
-      .then(async () => {
-        console.log(`Folder '${currentDateFolder}' created successfully!`);
-
-        return await fss.copy(nextFolderPath, currentDateFolder);
-      })
-      .then(() => {
-        console.log("Contents copied successfully!");
-      })
-      .catch((err) => {
-        console.error("Error:", err);
-      });
-
-    if (!existsSync(tempExtractPath)) {
-      fs.promises.mkdir(tempExtractPath);
-    }
-    const zipFilePath = path.join(tempExtractPath, `${version}.zip`);
-    await fs.promises.writeFile(zipFilePath, zipBuffer);
-
-    await fss.emptyDir(nextFolderPath);
-
-    const zip = new AdmZip(zipFilePath);
-    zip.extractAllTo(nextFolderPath, true);
-
-    const data = await fetchCurrentVersion();
-    const pr_version = JSON.parse(data).current_version;
-    await updateVersion(pr_version, version);
-    await isUpdated("0");
-
-    // exec("npm run start", (error, stdout, stderr) => {
-    //   if (error) {
-    //     console.error(`Error restarting server: ${error}`);
-    //   } else {
-    //     console.log("Server restarted successfully");
-    //   }
-    // });
-  } catch (error) {
-    const currentDateFolderBackup = path.join(backups, getCurrentDate());
-    await fss.emptyDir(nextFolderPath);
-    await fss.copy(currentDateFolderBackup, nextFolderPath);
-    console.error("Error updating CMS:", error);
-
-    return { success: false, error: "Failed to update CMS" };
-  } finally {
-    fs.rmdir(tempExtractPath, { recursive: true }, (err) => {
-      if (err) {
-        console.error(`Error removing directory: ${err}`);
-      } else {
-        console.log("Directory removed successfully!");
-      }
-    });
-  }
+    console.log(`Script output: ${stdout}`);
+    console.error(`Script errors: ${stderr}`);
+    res.json({ success: true, message: "Update process initiated!" });
+  });
 }
+
+// export async function updateCMS(formData) {
+// const version = await newVersionCheck();
+// const response = await fetch(`http://localhost:3004/zip/${version}`);
+// const arrayBuffer = await response.arrayBuffer();
+// const zipBuffer = Buffer.from(arrayBuffer);
+// const tempExtractPath = path.join(process.cwd(), "temp_extracted");
+// const backups = path.join(process.cwd(), "backups");
+// const nextFolderPath = path.join(process.cwd(), ".next");
+// try {
+//   await isUpdated("1");
+
+//   if (!existsSync(backups)) {
+//     fs.promises.mkdir(backups);
+//   }
+//   const currentDateFolder = path.join(backups, getCurrentDate());
+
+//   await fss
+//     .ensureDir(currentDateFolder)
+//     .then(async () => {
+//       console.log(`Folder '${currentDateFolder}' created successfully!`);
+
+//       return await fss.copy(nextFolderPath, currentDateFolder);
+//     })
+//     .then(() => {
+//       console.log("Contents copied successfully!");
+//     })
+//     .catch((err) => {
+//       console.error("Error:", err);
+//     });
+
+//   if (!existsSync(tempExtractPath)) {
+//     fs.promises.mkdir(tempExtractPath);
+//   }
+//   const zipFilePath = path.join(tempExtractPath, `${version}.zip`);
+//   await fs.promises.writeFile(zipFilePath, zipBuffer);
+
+//   await fss.emptyDir(nextFolderPath);
+
+//   const zip = new AdmZip(zipFilePath);
+//   zip.extractAllTo(nextFolderPath, true);
+
+//   const data = await fetchCurrentVersion();
+//   const pr_version = JSON.parse(data).current_version;
+//   await updateVersion(pr_version, version);
+//   await isUpdated("0");
+
+// exec("npm run start", (error, stdout, stderr) => {
+//   if (error) {
+//     console.error(`Error restarting server: ${error}`);
+//   } else {
+//     console.log("Server restarted successfully");
+//   }
+// });
+// } catch (error) {
+//   const currentDateFolderBackup = path.join(backups, getCurrentDate());
+//   await fss.emptyDir(nextFolderPath);
+//   await fss.copy(currentDateFolderBackup, nextFolderPath);
+//   console.error("Error updating CMS:", error);
+
+//   return { success: false, error: "Failed to update CMS" };
+// } finally {
+//   fs.rmdir(tempExtractPath, { recursive: true }, (err) => {
+//     if (err) {
+//       console.error(`Error removing directory: ${err}`);
+//     } else {
+//       console.log("Directory removed successfully!");
+//     }
+//   });
+// }
+// }
 
 function getCurrentDate() {
   const today = new Date();
