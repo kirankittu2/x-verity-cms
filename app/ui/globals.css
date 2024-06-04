@@ -1,0 +1,57 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+.text-14-grey{
+    @apply text-sm text-[#A8A8A8];
+}
+
+.text-15-grey{
+    @apply text-[15px] text-[#A8A8A8];
+}
+
+.text-15-black{
+    @apply text-[15px] text-black;
+}
+
+.text-18-black{
+    @apply text-lg text-black font-bold;
+}
+
+.text-24-black{
+    @apply text-2xl text-black font-bold;
+}
+
+.text-28-black{
+    @apply text-[28px] text-black font-black;
+}
+
+.activity-table-body  tr:hover{
+    background-color: #F8F8F8;
+}
+
+.custom-border{
+   @apply shadow-[0px_2px_1px_#0000000D] border-t border-l border-r border-[#EBEBEB] rounded;
+}
+
+.timestamp {
+    font-size: xx-small;
+}
+
+.image-style-align-left{
+    float: left;
+}
+
+.image-style-align-left{
+    float: right;
+}
+
+.image-style-block-align-left{
+    margin-right: auto;
+    margin-left: 0;
+}
+
+.image-style-block-align-left{
+    margin-right: 0;
+    margin-left: auto;
+}

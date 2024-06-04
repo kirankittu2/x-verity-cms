@@ -1,0 +1,14 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="19" height="17.97" viewBox="0 0 19 17.97">
+  <g id="Group_109" data-name="Group 109" transform="translate(-62.503 -192.369)">
+    <g id="chart-histogram_1_" data-name="chart-histogram(1)" transform="translate(61.252 192.369)">
+      <g id="Component_1_1" data-name="Component 1 – 1" transform="translate(1.251 0)">
+        <path id="Path_1879" data-name="Path 1879" d="M16.726,15.861H3.636A2.172,2.172,0,0,1,1.454,13.7V.721A.727.727,0,0,0,0,.721V13.7a3.625,3.625,0,0,0,3.636,3.6h13.09a.721.721,0,1,0,0-1.442Z" transform="translate(0.755 0)"/>
+        <path id="Path_1880" data-name="Path 1880" d="M5.727,17.544a.727.727,0,0,0,.727-.727v-5.09a.727.727,0,1,0-1.454,0v5.09A.727.727,0,0,0,5.727,17.544Z" transform="translate(-0.483 -3.104)"/>
+        <path id="Path_1881" data-name="Path 1881" d="M10,9.727v6.544a.727.727,0,0,0,1.454,0V9.727a.727.727,0,0,0-1.454,0Z" transform="translate(-1.882 -2.552)"/>
+        <path id="Path_1882" data-name="Path 1882" d="M15,12.727V17.09a.727.727,0,1,0,1.454,0V12.727a.727.727,0,0,0-1.454,0Z" transform="translate(-3.281 -3.38)"/>
+        <path id="Path_1883" data-name="Path 1883" d="M20,8.727V16a.727.727,0,0,0,1.454,0V8.727a.727.727,0,1,0-1.454,0Z" transform="translate(-4.701 -2.275)"/>
+        <path id="Path_1884" data-name="Path 1884" d="M5.727,6.544a.727.727,0,0,0,.514-.213L8.849,3.724a.745.745,0,0,1,1.028,0L11.456,5.3a2.181,2.181,0,0,0,3.085,0L18.6,1.241A.727.727,0,1,0,17.575.213L13.513,4.274a.727.727,0,0,1-1.028,0L10.905,2.7a2.181,2.181,0,0,0-3.085,0L5.213,5.3a.727.727,0,0,0,.514,1.241Z" transform="translate(-0.609 0)"/>
+      </g>
+    </g>
+  </g>
+</svg>
