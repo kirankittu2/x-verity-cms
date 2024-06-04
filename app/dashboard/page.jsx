@@ -35,7 +35,9 @@ export default async function Dashboard() {
           </div>
         )}
         <div className="mb-10">
-          <h2 className="text-15-grey mb-5">Overview Checks For You</h2>
+          <h2 className="text-15-grey mb-5">
+            Overview Checks For You to check now please
+          </h2>
           <div className="grid grid-cols-6 gap-x-7">
             <Card
               name="Articles"
