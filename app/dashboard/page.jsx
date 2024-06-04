@@ -82,7 +82,11 @@ export default async function Dashboard() {
           </div>
         </div>
         <div>
+<<<<<<< HEAD
           <h2 className="text-15-grey mb-5">Activities</h2>
+=======
+          <h2 className="text-15-grey mb-5">All of your Activities</h2>
+>>>>>>> 70801b40c1fb983368d800a24c51a2ebe03f73fa
           <Table />
         </div>
       </main>
