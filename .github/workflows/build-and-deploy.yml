@@ -1,0 +1,29 @@
+name: Build and Deploy
+
+on:
+  push:
+    branches:
+      - dev  # Adjust branch name as needed
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v2
+
+      - name: Install dependencies
+        run: |
+          npm install  # Replace with your dependency installation command
+          # Example: yarn install
+
+      - name: Build
+        run: |
+          npm run build  # Replace with your build command
+          # Example: yarn build
+
+      - name: Start Application
+        run: |
+          npm start  # Replace with your start command
+          # Example: yarn start
