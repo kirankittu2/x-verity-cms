@@ -1,7 +1,7 @@
 #!/bin/bash
 
 # Navigate to your project directory
-cd /x-verity-cms
+cd C:/Users/kiran/OneDrive/Desktop/x-verity-copy-files
 
 # Pull the latest changes from GitHub
 git pull origin main
