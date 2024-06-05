@@ -50,13 +50,13 @@ export async function createCategory(formData) {
 }
 
 export async function updateCMS(formData) {
-  const repoPath = path.join(__dirname, "../../../../");
+  const repoPath = path.join(__dirname, "../../../");
   console.log(repoPath);
 
   exec(`cd ${repoPath} && git pull origin main`, (error, stdout, stderr) => {
     if (error) {
       console.error(`Error pulling updates: ${error.message}`);
-      return res.status(500).send("Server Error");
+      return "Server Error";
     }
     if (stderr) {
       console.error(`git pull stderr: ${stderr}`);
