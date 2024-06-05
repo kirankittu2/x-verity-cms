@@ -49,7 +49,7 @@ export async function createCategory(formData) {
   revalidatePath(`/dashboard/${page}/category`);
 }
 
-export async function updateCMS(formData) {
+export async function updateCMS(prevState, formData) {
   const repoPath = path.join(__dirname, "../../../");
   console.log(repoPath);
 
