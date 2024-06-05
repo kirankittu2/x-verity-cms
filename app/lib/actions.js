@@ -50,18 +50,6 @@ export async function createCategory(formData) {
 }
 
 export async function updateCMS(formData) {}
-export async function updateCMS(formData) {
-  const scriptPath = path.join(__dirname, "../../../../update.sh");
-  exec(`${scriptPath}`, (error, stdout, stderr) => {
-    if (error) {
-      console.error(`Error executing script: ${error}`);
-      return { success: false, message: "Update failed!" };
-    }
-    console.log(`Script output: ${stdout}`);
-    console.error(`Script errors: ${stderr}`);
-    return { success: true, message: "Update process initiated!" };
-  });
-}
 
 // export async function updateCMS(formData) {
 // const version = await newVersionCheck();
