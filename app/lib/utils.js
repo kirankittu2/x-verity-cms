@@ -42,6 +42,7 @@ export async function newVersionCheck() {
 export async function versionCheck() {
   noStore();
   const version = await fetchCurrentVersion();
+  console.log(version);
   const currentVersion = JSON.parse(version).current_version;
   const data = await newVersionCheck();
 
@@ -62,7 +63,6 @@ export async function dateConversion(originalTimestamp) {
   const formattedDate = dateObject.toLocaleDateString("en-US", options);
   return formattedDate.toString();
 }
-
 
 export async function deleteData(name, value, mutateData, unique_name) {
   if (name == "media") {
