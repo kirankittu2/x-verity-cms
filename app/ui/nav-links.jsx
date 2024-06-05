@@ -73,6 +73,13 @@ const links = [
     children: [],
   },
   {
+    id: "7",
+    name: "Media",
+    href: "/dashboard/media",
+    icon: media,
+    children: [],
+  },
+  {
     id: "5",
     name: "Users",
     href: "/dashboard/users",
