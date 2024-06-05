@@ -49,7 +49,59 @@ export async function createCategory(formData) {
   revalidatePath(`/dashboard/${page}/category`);
 }
 
-export async function updateCMS(formData) {}
+export async function updateCMS(formData) {
+  const repoPath = path.join(__dirname, "../../../../");
+  console.log(repoPath);
+
+  exec(`cd ${repoPath} && git pull origin main`, (error, stdout, stderr) => {
+    if (error) {
+      console.error(`Error pulling updates: ${error.message}`);
+      return res.status(500).send("Server Error");
+    }
+    if (stderr) {
+      console.error(`git pull stderr: ${stderr}`);
+    }
+    console.log(`git pull stdout: ${stdout}`);
+
+    // Install new dependencies
+    exec("npm install", { cwd: repoPath }, (error, stdout, stderr) => {
+      if (error) {
+        console.error(`Error installing dependencies: ${error.message}`);
+        return "Server Error";
+      }
+      if (stderr) {
+        console.error(`npm install stderr: ${stderr}`);
+      }
+      console.log(`npm install stdout: ${stdout}`);
+
+      // Build the React app
+      exec("npm run build", { cwd: repoPath }, (error, stdout, stderr) => {
+        if (error) {
+          console.error(`Error building the app: ${error.message}`);
+          return "Server Error";
+        }
+        if (stderr) {
+          console.error(`Build stderr: ${stderr}`);
+        }
+        console.log(`Build stdout: ${stdout}`);
+
+        // Restart the server using PM2
+        exec("npm run start", (error, stdout, stderr) => {
+          if (error) {
+            console.error(`Error restarting server: ${error.message}`);
+            return "Server Error";
+          }
+          if (stderr) {
+            console.error(`PM2 restart stderr: ${stderr}`);
+          }
+          console.log(`PM2 restart stdout: ${stdout}`);
+
+          return "Update successful";
+        });
+      });
+    });
+  });
+}
 
 // export async function updateCMS(formData) {
 // const version = await newVersionCheck();

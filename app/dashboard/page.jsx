@@ -28,7 +28,7 @@ export default async function Dashboard() {
       <main className="pl-10 pr-10 pt-5">
         {version && (
           <div className="flex justify-between items-center custom-border bg-white p-3 mb-5">
-            <p>New Update Available</p>
+            <p>New Update Available 2.0.0</p>
             <form action={updateCMS}>
               <Button name="Update Now" />
             </form>
