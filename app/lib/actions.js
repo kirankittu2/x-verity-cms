@@ -48,19 +48,7 @@ export async function createCategory(formData) {
   revalidatePath(`/dashboard/${page}/category`);
 }
 
-export async function updateCMS(formData) {
-  exec("./update.sh", (error, stdout, stderr) => {
-    if (error) {
-      console.error(`Error executing script: ${error}`);
-      return res
-        .status(500)
-        .json({ success: false, message: "Update failed!" });
-    }
-    console.log(`Script output: ${stdout}`);
-    console.error(`Script errors: ${stderr}`);
-    res.json({ success: true, message: "Update process initiated!" });
-  });
-}
+export async function updateCMS(formData) {}
 
 // export async function updateCMS(formData) {
 // const version = await newVersionCheck();
