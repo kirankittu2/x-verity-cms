@@ -13,7 +13,7 @@ export default function UpdateUi() {
   console.log(state);
   return (
     <div className="flex justify-between items-center custom-border bg-white p-3 mb-5">
-      <p>New Update Available 5.0.0</p>
+      <p>New Update Available {state.success}</p>
       <form action={formAction}>
         <Button name="Update Now" />
       </form>
