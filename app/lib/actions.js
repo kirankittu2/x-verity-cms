@@ -56,7 +56,9 @@ export async function updateCMS(formData) {
   exec(`cd ${repoPath} && git pull origin dev`, (error, stdout, stderr) => {
     if (error) {
       console.error(`Error pulling updates: ${error.message}`);
-      return "Server Error";
+      return {
+        success: false,
+      };
     }
     if (stderr) {
       console.error(`git pull stderr: ${stderr}`);
@@ -67,7 +69,9 @@ export async function updateCMS(formData) {
     exec("npm install", { cwd: repoPath }, (error, stdout, stderr) => {
       if (error) {
         console.error(`Error installing dependencies: ${error.message}`);
-        return "Server Error";
+        return {
+          success: false,
+        };
       }
       if (stderr) {
         console.error(`npm install stderr: ${stderr}`);
@@ -78,26 +82,32 @@ export async function updateCMS(formData) {
       exec("npm run build", { cwd: repoPath }, (error, stdout, stderr) => {
         if (error) {
           console.error(`Error building the app: ${error.message}`);
-          return "Server Error";
+          return {
+            success: false,
+          };
         }
         if (stderr) {
           console.error(`Build stderr: ${stderr}`);
         }
         console.log(`Build stdout: ${stdout}`);
 
-        // Restart the server using PM2
-        exec("npm run start", (error, stdout, stderr) => {
-          if (error) {
-            console.error(`Error restarting server: ${error.message}`);
-            return "Server Error";
-          }
-          if (stderr) {
-            console.error(`PM2 restart stderr: ${stderr}`);
-          }
-          console.log(`PM2 restart stdout: ${stdout}`);
+        return {
+          success: true,
+        };
 
-          return "Update successful";
-        });
+        // Restart the server using PM2
+        // exec("npm run start", (error, stdout, stderr) => {
+        //   if (error) {
+        //     console.error(`Error restarting server: ${error.message}`);
+        //     return {
+        //       success: false,
+        //     };
+        //   }
+        //   if (stderr) {
+        //     console.error(`PM2 restart stderr: ${stderr}`);
+        //   }
+        //   console.log(`PM2 restart stdout: ${stdout}`);
+        // });
       });
     });
   });
