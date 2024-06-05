@@ -53,7 +53,7 @@ export async function updateCMS(formData) {
   const repoPath = path.join(__dirname, "../../../");
   console.log(repoPath);
 
-  exec(`cd ${repoPath} && git pull origin main`, (error, stdout, stderr) => {
+  exec(`cd ${repoPath} && git pull origin dev`, (error, stdout, stderr) => {
     if (error) {
       console.error(`Error pulling updates: ${error.message}`);
       return "Server Error";
