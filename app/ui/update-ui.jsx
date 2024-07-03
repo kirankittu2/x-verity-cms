@@ -10,7 +10,6 @@ const initialState = {
 
 export default function UpdateUi() {
   const [state, formAction] = useFormState(updateCMS, initialState);
-  console.log(state);
   return (
     <div className="flex justify-between items-center custom-border bg-white p-3 mb-5">
       <p>New Update Available {state.success}</p>

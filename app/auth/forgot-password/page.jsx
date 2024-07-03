@@ -4,12 +4,20 @@ import Image from "next/image";
 import logo from "@/public/logo/logo.png";
 import { forgotPassword, verifyOTP } from "@/app/lib/actions";
 import { useFormState } from "react-dom";
+import { useState } from "react";
 
 export default function Login() {
   const initialState = {
-    message: false,
+    message: "",
+    success: false,
   };
+
   const [state, formAction] = useFormState(forgotPassword, initialState);
+  const [otpVerificationState, otpVerifyAction] = useFormState(
+    verifyOTP,
+    initialState
+  );
+  const [email, setEmail] = useState("");
 
   return (
     <div className="flex flex-col justify-center items-center h-full">
@@ -18,6 +26,11 @@ export default function Login() {
       </div>
       <form action={formAction}>
         <div className="p-10 bg-[#F8F8F8] custom-border">
+          {state.message.length > 0 && !state.success && (
+            <p className="text-center text-red-300 font-bold">
+              {state.message}
+            </p>
+          )}
           <div className="flex flex-col mb-10">
             <label className="text-15-black py-2" htmlFor="email">
               Username or Business Email
@@ -27,6 +40,8 @@ export default function Login() {
               name="email"
               id="email"
               type="email"
+              onChange={(e) => setEmail(e.target.value)}
+              required
             />
           </div>
           <button className="bg-black w-full h-[48px] text-white text-[15px]">
@@ -34,9 +49,12 @@ export default function Login() {
           </button>
         </div>
       </form>
-      {state.message && (
-        <form action={verifyOTP} className="mt-10">
+      {state.success && (
+        <form action={otpVerifyAction} className="mt-10">
           <div className="flex flex-col mb-10">
+            <p className="text-center text-red-300 font-bold">
+              {otpVerificationState.message}
+            </p>
             <label className="text-15-black py-2" htmlFor="email">
               Enter your OTP
             </label>
@@ -47,6 +65,7 @@ export default function Login() {
                 id="otp"
                 type="text"
               />
+              <input name="email" value={email} hidden />
               <button className="bg-black w-full h-[48px] text-white text-[15px]">
                 SUBMIT
               </button>

@@ -1,25 +1,28 @@
 import Image from "next/image";
 import settingsImage from "@/public/settings.svg";
 import logoutImage from "@/public/log-out.svg";
-import addImage from "@/public/add.svg";
-import { signOutApp } from "@/app/lib/actions";
+
 import { signOut } from "@/auth";
+import Link from "next/link";
+import Create from "./create";
 
 export default function NavBar({ page }) {
   return (
     <div className="flex justify-between p-10 border-b border-[#EBEBEB]">
       <h1 className="text-24-black">{page}</h1>
       <div className="flex">
-        <div className="w-[40px] h-[40px] border border-[#DCDCDC] rounded bg-white flex justify-center items-center cursor-pointer">
-          <Image src={addImage} width={10} height={10} alt="Add Button" />
-        </div>
-        <Image
-          className="cursor-pointer ml-5 mr-5 w-auto h-auto"
-          src={settingsImage}
-          width={18}
-          height={18}
-          alt="Settings Button"
-        />
+        <Create />
+        <Link
+          className="flex justify-center items-center"
+          href="/dashboard/settings">
+          <Image
+            className="cursor-pointer ml-5 mr-5 w-auto h-auto"
+            src={settingsImage}
+            width={18}
+            height={18}
+            alt="Settings Button"
+          />
+        </Link>
         <form
           action={async () => {
             "use server";

@@ -11,7 +11,7 @@ import Link from "next/link";
 import clsx from "clsx";
 import { usePathname } from "next/navigation";
 
-const links = [
+const Adminlinks = [
   {
     id: "1",
     name: "Dashboard",
@@ -79,6 +79,7 @@ const links = [
     icon: users,
     children: [],
   },
+
   {
     id: "6",
     name: "Case Studies",
@@ -102,10 +103,111 @@ const links = [
       },
     ],
   },
+  {
+    id: "7",
+    name: "Forms",
+    href: "/dashboard/forms",
+    icon: users,
+    children: [],
+  },
 ];
 
-export default function NavLinks({ menuState }) {
+const Employeelinks = [
+  {
+    id: "1",
+    name: "Dashboard",
+    href: "/dashboard",
+    icon: dashboard,
+    children: [],
+  },
+  {
+    id: "2",
+    name: "Articles",
+    href: "/dashboard/articles",
+    icon: articles,
+    children: [
+      {
+        id: "create-new",
+        name: "Create New",
+        href: "/dashboard/articles/create-new",
+      },
+      {
+        id: "list-of-articles",
+        name: "List Of Articles",
+        href: "/dashboard/articles/list-of-articles",
+      },
+      {
+        id: "category",
+        name: "Category",
+        href: "/dashboard/articles/category",
+      },
+    ],
+  },
+  {
+    id: "3",
+    name: "Pages",
+    href: "/dashboard/pages",
+    icon: pages,
+    children: [
+      {
+        id: "create-new",
+        name: "Create New",
+        href: "/dashboard/pages/create-new",
+      },
+      {
+        id: "list-of-articles",
+        name: "List Of Articles",
+        href: "/dashboard/pages/list-of-pages",
+      },
+      {
+        id: "category",
+        name: "Category",
+        href: "/dashboard/pages/category",
+      },
+    ],
+  },
+  {
+    id: "4",
+    name: "Media",
+    href: "/dashboard/media",
+    icon: media,
+    children: [],
+  },
+  {
+    id: "5",
+    name: "Case Studies",
+    href: "/dashboard/case_studies",
+    icon: caseStudies,
+    children: [
+      {
+        id: "create-new",
+        name: "Create New",
+        href: "/dashboard/case_studies/create-new",
+      },
+      {
+        id: "list-of-articles",
+        name: "List Of Articles",
+        href: "/dashboard/case_studies/list-of-case-studies",
+      },
+      {
+        id: "category",
+        name: "Category",
+        href: "/dashboard/case_studies/category",
+      },
+    ],
+  },
+  {
+    id: "6",
+    name: "Forms",
+    href: "/dashboard/forms",
+    icon: users,
+    children: [],
+  },
+];
+
+export default function NavLinks({ user, menuState }) {
   const pathname = usePathname();
+  const links = user.user.role == "Admin" ? Adminlinks : Employeelinks;
 
   return (
     <>
@@ -136,7 +238,7 @@ export default function NavLinks({ menuState }) {
               )}
             </Link>
 
-            {pathname.includes(link.href) && (
+            {pathname.includes(link.href) && !menuState && (
               <div className="flex flex-col max-h-[500px]">
                 {link.children.map((child) => {
                   return (

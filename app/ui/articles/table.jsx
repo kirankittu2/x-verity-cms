@@ -4,11 +4,13 @@ import SelectBlack from "@/app/ui/select-black";
 import Mutation from "@/app/ui/mutation";
 import Link from "next/link";
 import { useState } from "react";
-import { dateConversion } from "@/app/lib/utils";
+import DateTable from "../date";
+import Button from "../button";
+import { operations } from "@/app/lib/data";
 
 export default function Table({ totaldata, totalPages, unique_name }) {
   const [articleID, storeArticleID] = useState([]);
-  const data = ["Delete"];
+  const data = ["Delete", "Draft", "Publish"];
 
   function checkBoxData(e) {
     const articleUniqueID = e.currentTarget.getAttribute("data-option");
@@ -21,6 +23,36 @@ export default function Table({ totaldata, totalPages, unique_name }) {
     }
   }
 
+  function handleCheckBox(event) {
+    const allChecks = document.querySelectorAll(".check");
+
+    if (event.target.checked) {
+      const newIDs = [];
+      allChecks.forEach((check) => {
+        check.checked = true;
+        const id = check.getAttribute("data-option");
+        newIDs.push(id);
+      });
+      storeArticleID(newIDs);
+    } else {
+      allChecks.forEach((check) => {
+        check.checked = false;
+        storeArticleID([]);
+      });
+    }
+  }
+
+  async function handleOperations(event) {
+    const id = event.target.getAttribute("data-option");
+    const operation = document.querySelector(
+      `.operation-value[data-option="${id}"]`
+    ).textContent;
+
+    if (operation != "Select Option") {
+      await operations(id, operation, unique_name);
+    }
+  }
+
   return (
     <>
       <h2 className="text-15-grey mb-5">List of Articles</h2>
@@ -29,7 +61,10 @@ export default function Table({ totaldata, totalPages, unique_name }) {
           <thead className="border-b text-center text-15-black font-bold">
             <tr>
               <th>
-                <input type="checkbox"></input>
+                <input
+                  className="check"
+                  onClick={handleCheckBox}
+                  type="checkbox"></input>
               </th>
               <th className="text-left p-5 border-r border-[#EBEBEB]">Title</th>
               <th className=" p-5 border-r border-[#EBEBEB]">Category</th>
@@ -45,6 +80,7 @@ export default function Table({ totaldata, totalPages, unique_name }) {
                 <tr data-option={activity.id} key={activity.id}>
                   <td className="px-5 p-2 flex justify-center mt-3">
                     <input
+                      className="check"
                       onChange={checkBoxData}
                       data-option={activity.id}
                       type="checkbox"></input>
@@ -61,12 +97,19 @@ export default function Table({ totaldata, totalPages, unique_name }) {
                   <td className="px-5 p-2 border-r border-[#EBEBEB]">
                     {activity.status}
                   </td>
+                  <DateTable activity={activity} />
                   <td className="px-5 p-2 border-r border-[#EBEBEB]">
-                    {/* {dateConversion(activity.created_on)} */}
+                    {activity.author}
                   </td>
-                  <td className="px-5 p-2 border-r border-[#EBEBEB]"></td>
                   <td className="px-5 p-2">
-                    <SelectBlack />
+                    <SelectBlack data={data} id={activity.id} />
+                  </td>
+                  <td className="px-5 p-2">
+                    <Button
+                      onClick={handleOperations}
+                      dataOption={activity.id}
+                      name="Apply"
+                    />
                   </td>
                 </tr>
               );
@@ -74,7 +117,7 @@ export default function Table({ totaldata, totalPages, unique_name }) {
           </tbody>
         </table>
         <Mutation
-          name="articles"
+          name="page"
           totalPages={totalPages}
           data={data}
           mutateData={articleID}

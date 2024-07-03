@@ -8,7 +8,7 @@ export default async function CreateNew() {
 
   return (
     <div className="flex flex-col h-full">
-      <NavBar page="Create New Page" />
+      <NavBar page="Create New Case Study" />
       <main className="pl-10 pr-10 pt-5">
         <Create
           category_list={JSON.stringify(category_list)}

@@ -5,7 +5,7 @@ import Image from "next/image";
 import dropdown from "@/public/collapse-icon/collapse-icon.svg";
 import { Suspense, useState } from "react";
 import Pagination from "./pagination";
-import { deleteData } from "../lib/utils";
+import { mutateDBData } from "../lib/utils";
 
 export default function Mutation({
   name,
@@ -22,9 +22,26 @@ export default function Mutation({
     handleToggle(!toggle);
   }
 
-   function deleteDataContainer() {
-    storeImageID([])
-    deleteData(name, value, mutateData, unique_name)
+  function mutateDataContainer() {
+    const allChecks = document.querySelectorAll(".check");
+    allChecks.forEach((check) => {
+      check.checked = false;
+    });
+
+    if (value == "Delete") {
+      storeImageID([]);
+      mutateDBData(name, value, mutateData, unique_name);
+    }
+
+    if (value == "Draft") {
+      storeImageID([]);
+      mutateDBData(name, value, mutateData, unique_name);
+    }
+
+    if (value == "Publish") {
+      storeImageID([]);
+      mutateDBData(name, value, mutateData, unique_name);
+    }
   }
 
   return (
@@ -63,7 +80,7 @@ export default function Mutation({
         )}
       </div>
       <div className="w-4"></div>
-      <Button name="Apply to Selected Items" onClick={deleteDataContainer} />
+      <Button name="Apply to Selected Items" onClick={mutateDataContainer} />
       <Suspense>
         <Pagination totalPages={totalPages} />
       </Suspense>

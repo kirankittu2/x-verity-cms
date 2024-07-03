@@ -7,6 +7,7 @@ export default function Fields({ togglePopup, popup, addFields, allfields }) {
   const fields = ["Text", "ckEditor"];
   const [selectedField, selectField] = useState("");
   const [fieldName, setFieldName] = useState("");
+  const [error, setError] = useState(false);
 
   function closePopup() {
     togglePopup(!popup);
@@ -22,27 +23,30 @@ export default function Fields({ togglePopup, popup, addFields, allfields }) {
   }
 
   function handleInputChange(e) {
+    setError(false);
     setFieldName(e.target.value);
   }
 
   function insertField(e) {
-    if (selectedField == "Text") {
+    if (fieldName.length > 0) {
       const data = {
-        name: fieldName,
+        name: formatString(fieldName),
         type: selectedField,
       };
       addFields([...allfields, data]);
-    }
 
-    if (selectedField == "ckEditor") {
-      const data = {
-        name: fieldName,
-        type: selectedField,
-      };
-      addFields([...allfields, data]);
+      togglePopup(!popup);
+    } else {
+      setError(true);
     }
+  }
 
-    togglePopup(!popup);
+  function formatString(str) {
+    const trimmedString = str.trim();
+    const lowerCaseString = trimmedString.toLowerCase();
+    const singleSpacedString = lowerCaseString.replace(/\s+/g, " ");
+    const formattedString = singleSpacedString.replace(/ /g, "-");
+    return formattedString;
   }
 
   return (
@@ -58,21 +62,30 @@ export default function Fields({ togglePopup, popup, addFields, allfields }) {
               <div
                 data-option={field}
                 onClick={showField}
-                className="h-[50px] w-full border flex justify-center items-center cursor-pointer mb-2">
+                className={`h-[50px] w-full border flex justify-center items-center cursor-pointer mb-2 ${
+                  selectedField == field ? "bg-[#F8F8F8]" : "bg-white"
+                }`}>
                 {field}
               </div>
             </div>
           );
         })}
         {selectedField != "" && (
-          <div className="flex">
-            <input
-              className="bg-[#F8F8F8] w-full p-4 rounded outline-none placeholder:text-black placeholder:text-[15px] h-[48px]"
-              placeholder="Enter the field name"
-              onChange={handleInputChange}
-            />
-            <Button name="Submit" onClick={insertField} />
-          </div>
+          <>
+            <div className="flex">
+              <input
+                className="bg-[#F8F8F8] w-full p-4 rounded outline-none placeholder:text-black placeholder:text-[15px] h-[48px]"
+                placeholder="Enter the field name"
+                onChange={handleInputChange}
+              />
+              <Button name="Submit" onClick={insertField} />
+            </div>
+            {error && (
+              <p className="text-[14px] text-red-300">
+                Please enter the field name
+              </p>
+            )}
+          </>
         )}
       </div>
     </div>

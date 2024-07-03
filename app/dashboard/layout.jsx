@@ -1,9 +1,12 @@
+import { auth } from "@/auth";
 import SideNav from "../ui/sidenav";
 
-export default function Layout({ children }) {
+export default async function Layout({ children }) {
+  const res = await auth();
+
   return (
     <div className="flex h-screen bg-[#F8F8F8] relative">
-      <SideNav />
+      <SideNav user={res} />
       <div className="w-full overflow-y-auto">{children}</div>;
     </div>
   );

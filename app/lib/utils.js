@@ -1,10 +1,6 @@
 import { unstable_noStore as noStore } from "next/cache";
-import { fetchCurrentVersion } from "./data";
-import {
-  deleteArticleCategory,
-  deleteArticles,
-  deleteImages,
-} from "@/app/lib/data";
+import { fetchCurrentVersion, mutateStatus } from "./data";
+import { deleteCategoryData, deletePages, deleteImages } from "@/app/lib/data";
 
 export function generatePagination(currentPage, totalPages) {
   const page = currentPage + 1;
@@ -42,7 +38,6 @@ export async function newVersionCheck() {
 export async function versionCheck() {
   noStore();
   const version = await fetchCurrentVersion();
-  console.log(version);
   const currentVersion = JSON.parse(version).current_version;
   const data = await newVersionCheck();
 
@@ -59,12 +54,16 @@ export async function dateConversion(originalTimestamp) {
     year: "numeric",
     month: "long",
     day: "numeric",
+    hour: "numeric",
+    minute: "numeric",
+    second: "numeric",
+    hour12: true,
   };
   const formattedDate = dateObject.toLocaleDateString("en-US", options);
   return formattedDate.toString();
 }
 
-export async function deleteData(name, value, mutateData, unique_name) {
+export async function mutateDBData(name, value, mutateData, unique_name) {
   if (name == "media") {
     if (value == "Delete") {
       const response = await fetch("/files/delete", {
@@ -82,15 +81,30 @@ export async function deleteData(name, value, mutateData, unique_name) {
     }
   }
 
-  if (name == "article_category") {
+  if (name == "category") {
     if (value == "Delete") {
-      deleteArticleCategory(mutateData, unique_name);
+      deleteCategoryData(mutateData, unique_name);
     }
   }
 
-  if (name == "articles") {
+  if (name == "page") {
     if (value == "Delete") {
-      deleteArticles(mutateData, unique_name);
+      deletePages(mutateData, unique_name);
+    }
+
+    if (value == "Draft") {
+      mutateStatus(mutateData, value, unique_name);
+    }
+
+    if (value == "Publish") {
+      value = "Published";
+      mutateStatus(mutateData, value, unique_name);
     }
   }
+}
+
+export function generateRandomNumber() {
+  const randomNumber =
+    Math.floor(Math.random() * (999999 - 100000 + 1)) + 100000;
+  return randomNumber;
 }

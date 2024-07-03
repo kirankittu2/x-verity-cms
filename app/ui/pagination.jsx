@@ -47,7 +47,7 @@ export default function Pagination({ totalPages = 0 }) {
           </Link>
         )
       )}
-      {currentPage == totalPages ? (
+      {currentPage == totalPages || totalPages == 0 ? (
         <div className="w-[48px] h-full flex justify-center items-center">
           N
         </div>

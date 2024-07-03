@@ -13,12 +13,16 @@ export const { auth, signIn, signOut } = NextAuth({
       const userID = token.id;
       session.user.id = userID;
       session.user.role = token.role;
+      session.user.first_name = token.first_name;
+      session.user.last_name = token.last_name;
       return session;
     },
     async jwt({ token }) {
       const userID = token.sub;
       const userRole = await retrieveUserRoles(userID);
       token.role = JSON.parse(userRole).role;
+      token.first_name = JSON.parse(userRole).first_name;
+      token.last_name = JSON.parse(userRole).last_name;
       return token;
     },
   },
@@ -34,10 +38,12 @@ export const { auth, signIn, signOut } = NextAuth({
           const user = await getUser(email);
           if (!user) return null;
           const hashedPassword = await bcrypt.compare(password, user.password);
-          console.log(hashedPassword);
-          if (hashedPassword) return user;
+          if (hashedPassword) {
+            return user;
+          } else {
+            return null;
+          }
         }
-        console.log("Invalid credentials");
         return null;
       },
     }),

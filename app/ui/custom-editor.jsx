@@ -9,7 +9,7 @@ export default function CustomEditor({ name, prepareData, initialdata }) {
         editor={Editor}
         onChange={(event, editor) => {
           const data = editor.getData();
-          prepareData("", data, name, "ckEditor");
+          prepareData("", data, name);
         }}
       />
     </>

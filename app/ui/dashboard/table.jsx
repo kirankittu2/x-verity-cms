@@ -2,6 +2,7 @@ import Image from "next/image";
 import menudots from "@/public/menu-dots.svg";
 import { fetchAllActivities } from "@/app/lib/data";
 import { dateConversion } from "@/app/lib/utils";
+import DateTable from "../date";
 
 export default async function Table() {
   const data = await fetchAllActivities();
@@ -33,12 +34,8 @@ export default async function Table() {
                 <td className="px-5 p-4 border-r border-[#EBEBEB]">
                   {activity.type}
                 </td>
-                <td
-                  className="px-5 p-4 border-r border-[#EBEBEB]"
-                  suppressHydrationWarning={true}>
-                  {/* {dateConversion(activity.created_on)} */}
-                </td>
-                <td className="px-5 p-4">Kiran</td>
+                <DateTable activity={activity} />
+                <td className="px-5 p-4">{activity.author}</td>
                 <td className="px-5 p-4 ">
                   <Image
                     className="cursor-pointer w-auto h-auto"

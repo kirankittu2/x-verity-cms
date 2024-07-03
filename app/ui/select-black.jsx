@@ -2,13 +2,11 @@
 
 import Image from "next/image";
 import dropdownBlack from "@/public/collapse-icon/collapse-icon.svg";
-import dropdownWhite from "@/public/collapse-icon/collapse-icon-white.svg";
 import { useState } from "react";
 
-export default function SelectBlack() {
+export default function SelectBlack({ data, id }) {
   const [toggle, handleToggle] = useState(false);
   const [value, updateDropdownValue] = useState("Select Option");
-  const data = ["Delete"];
 
   function dropdownToggle() {
     handleToggle(!toggle);
@@ -23,7 +21,9 @@ export default function SelectBlack() {
       className="relative cursor-pointer group"
       onMouseEnter={dropdownToggle}
       onMouseLeave={dropdownToggle}>
-      <div className="w-full bg-white p-[1.24rem] border border-[#EBEBEB] rounded h-[48px] flex items-center text-15-black group-hover:bg-black group-hover:text-white">
+      <div
+        data-option={id}
+        className="operation-value w-full bg-white p-[1.24rem] border border-[#EBEBEB] rounded h-[48px] flex items-center text-15-black group-hover:bg-black group-hover:text-white">
         {value}
       </div>
       <div className="absolute top-0 right-0 border bg-white w-[50px] h-full flex justify-center items-center group-hover:bg-black rounded-r">

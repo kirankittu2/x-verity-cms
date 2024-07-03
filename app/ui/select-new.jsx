@@ -36,7 +36,7 @@ export default function SelectNew({ name, value, handleData, list }) {
                   key={item.name}
                   data-option={item.name}
                   className="h-[48px] hover:bg-black hover:text-white text-15-black flex items-center p-[1.24rem] border-b border-[#DCDCDC]"
-                  onClick={(e) => handleData(e)}>
+                  onClick={() => handleData(item.name)}>
                   {item.name}
                 </div>
               );

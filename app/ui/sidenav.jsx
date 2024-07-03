@@ -6,11 +6,8 @@ import collapseIcon from "@/public/collapse-icon/collapse-icon.svg";
 import NavLinks from "./nav-links";
 import { useState } from "react";
 
-export default function SideNav() {
+export default function SideNav({ user }) {
   const [menuState, handleCollapseMenu] = useState(false);
-  function collapseMenu() {
-    handleCollapseMenu(!menuState);
-  }
 
   return (
     <div className="h-full p-10 bg-white flex flex-col">
@@ -29,13 +26,13 @@ export default function SideNav() {
             width={8}
             height={14}
             alt="Side navbar collapse button"
-            onClick={collapseMenu}
+            onClick={() => handleCollapseMenu(true)}
           />
         )}
       </div>
       <p className="text-15-grey pb-5">Menu</p>
       <div>
-        <NavLinks menuState={menuState} />
+        <NavLinks user={user} menuState={menuState} />
       </div>
       <div className="mt-auto flex justify-center">
         {menuState && (
@@ -45,7 +42,7 @@ export default function SideNav() {
             width={8}
             height={14}
             alt="Side navbar collapse button"
-            onClick={collapseMenu}
+            onClick={() => handleCollapseMenu(false)}
           />
         )}
       </div>

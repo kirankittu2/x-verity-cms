@@ -1,6 +1,5 @@
 "use client";
 
-// import Button from "@/app/ui/button";
 import Select from "@/app/ui/select";
 import { usePathname, useRouter, useSearchParams } from "next/navigation";
 import { useDebouncedCallback } from "use-debounce";
@@ -27,7 +26,7 @@ export default function Filter({ first }) {
       <h2 className="text-15-grey mb-5">Filter</h2>
       <div className="bg-white custom-border p-5 mb-10">
         <form className="flex">
-          <div className="flex-1 mr-2 ">
+          <div className="flex-1 mr-2">
             <h3 className="text-15-grey mb-3">Title</h3>
             <input
               className="bg-[#F8F8F8] w-full p-4 rounded outline-none placeholder:text-black placeholder:text-[15px] h-[48px]"
@@ -44,10 +43,6 @@ export default function Filter({ first }) {
             <h3 className="text-15-grey mb-3">Status</h3>
             <Select data={second} name="date" />
           </div>
-          {/* <div>
-            <h3 className="text-15-grey mb-3">&nbsp;</h3>
-            <Button name="Filter" />
-          </div> */}
         </form>
       </div>
     </>
