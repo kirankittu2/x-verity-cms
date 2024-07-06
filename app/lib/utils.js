@@ -56,7 +56,6 @@ export async function dateConversion(originalTimestamp) {
     day: "numeric",
     hour: "numeric",
     minute: "numeric",
-    second: "numeric",
     hour12: true,
   };
   const formattedDate = dateObject.toLocaleDateString("en-US", options);
@@ -66,7 +65,7 @@ export async function dateConversion(originalTimestamp) {
 export async function mutateDBData(name, value, mutateData, unique_name) {
   if (name == "media") {
     if (value == "Delete") {
-      const response = await fetch("/files/delete", {
+      const response = await fetch("http://72.167.133.180:3001/files/delete", {
         method: "POST",
         headers: {
           "Content-Type": "application/json",

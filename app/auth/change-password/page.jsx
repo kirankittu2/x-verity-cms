@@ -5,7 +5,7 @@ import logo from "@/public/logo/logo.png";
 import { changePassword } from "@/app/lib/actions";
 import { useFormState } from "react-dom";
 import { useSearchParams } from "next/navigation";
-import { useState } from "react";
+import { Suspense, useState } from "react";
 
 const initialState = {
   message: "",

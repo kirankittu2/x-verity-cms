@@ -1,9 +1,9 @@
 import mysql from "mysql";
 
 var connection = mysql.createConnection({
-  host: "localhost",
-  user: "qcadmin_admin",
-  password: "SbI!J2mshKy@pm2",
+  host: "72.167.133.180",
+  user: "qcadmin",
+  password: `Dj"Hi4PaJt9Kt_^`,
   database: "qcadmin_xv_cms",
 });
 

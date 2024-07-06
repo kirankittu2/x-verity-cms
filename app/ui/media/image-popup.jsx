@@ -29,7 +29,7 @@ export default function ImagePopup({ item }) {
       const imageTime = params?.get("time") || "";
       const currentPage = params?.get("page") || 1;
       router.push(
-        `http://localhost:3000/dashboard/media?${
+        `http://72.167.133.180:3001/dashboard/media?${
           imageTitle !== "" ? "title=" + imageTitle + "&" : ""
         }${imageType !== "" ? "type=" + imageType + "&" : ""}${
           imageTime !== "" ? "time=" + imageTime + "&" : ""
@@ -51,7 +51,7 @@ export default function ImagePopup({ item }) {
                 width: "100%",
                 objectFit: "contain",
               }}
-              src={`http://localhost:3001/image/${details.uniquefilename}`}
+              src={`http://72.167.133.180:3001/image/${details.uniquefilename}`}
               alt=""
             />
           ) : (
@@ -65,7 +65,7 @@ export default function ImagePopup({ item }) {
           <p>
             {" "}
             <span className="font-bold">URL:</span>{" "}
-            {`http://localhost:3001/image/${details.uniquefilename}`}
+            {`http://72.167.133.180:3001/image/${details.uniquefilename}`}
           </p>
           <p>
             <span className="font-bold">File Type:</span> {details.type}

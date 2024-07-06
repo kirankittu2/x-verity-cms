@@ -18,18 +18,16 @@ export default function Create() {
         <div className="absolute w-[210px] top-[100%] right-0 border border-[#DCDCDC] bg-white rounded  z-50">
           <div className="p-2 px-4 hover:bg-[#F8F8F8]">
             {" "}
-            <Link href="/dashboard/articles/create-new">
-              Create New Article
-            </Link>{" "}
+            <Link href="/dashboard/articles/create-new">New Article</Link>{" "}
           </div>
           <div className="p-2 px-4 hover:bg-[#F8F8F8]">
             {" "}
-            <Link href="/dashboard/pages/create-new">Create New Page</Link>{" "}
+            <Link href="/dashboard/pages/create-new"> New Page</Link>{" "}
           </div>
           <div className="p-2 px-4 hover:bg-[#F8F8F8]">
             {" "}
             <Link href="/dashboard/case_studies/create-new">
-              Create New Case Study
+              New Case Study
             </Link>{" "}
           </div>
         </div>

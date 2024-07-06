@@ -4,7 +4,7 @@ import { useState } from "react";
 import Button from "./button";
 import { useRouter } from "next/navigation";
 
-export default function CreateNew({ name }) {
+export default function CreateNew({ name, main }) {
   const [value, setValue] = useState("");
   const [error, setError] = useState(false);
   const router = useRouter();
@@ -30,7 +30,7 @@ export default function CreateNew({ name }) {
             setError(false);
             setValue(e.target.value);
           }}
-          placeholder="Enter Article Title"
+          placeholder={`Enter ${main} Title`}
         />
         <Button onClick={handleUrl} name="Create New" />
       </div>

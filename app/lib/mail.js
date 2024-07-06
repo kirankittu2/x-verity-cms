@@ -2,17 +2,20 @@ import nodemailer from "nodemailer";
 
 export async function sendmail(email, otp) {
   const transporter = nodemailer.createTransport({
-    host: "smtp.gmail.com",
-    port: 587,
-    secure: false,
+    host: "mail.qcentrio.com",
+    port: 465,
+    secure: true,
     auth: {
-      user: "kirankittu3760@gmail.com",
-      pass: "tewt kjsl xeto xppk",
+      user: "qcadmin",
+      pass: `Dj"Hi4PaJt9Kt_^`,
+    },
+    tls: {
+      rejectUnauthorized: false,
     },
   });
 
   const info = await transporter.sendMail({
-    from: "kirankittu3760@gmail.com",
+    from: "qcadmin@180.133.167.72.host.secureserver.net",
     to: `${email}`,
     subject: "OTP",
     text: "One Time Password",

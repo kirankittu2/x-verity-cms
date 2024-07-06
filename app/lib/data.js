@@ -230,6 +230,7 @@ const storeDataSchema = z.object({
   featuredImage: z.string().url(),
   id: z.union([z.string(), z.number()]).optional(),
   unique_name: z.string(),
+  slug: z.string(),
 });
 
 export async function storeData(
@@ -240,7 +241,8 @@ export async function storeData(
   statusvalue,
   featuredImage,
   id,
-  unique_name
+  unique_name,
+  slug
 ) {
   let results = {};
 
@@ -253,6 +255,7 @@ export async function storeData(
     featuredImage,
     id,
     unique_name,
+    slug,
   });
 
   if (!validationResult.success) {
@@ -268,14 +271,15 @@ export async function storeData(
       statusvalue,
       featuredImage,
       id,
-      unique_name
+      unique_name,
+      slug
     );
     return;
   }
   const res = await auth();
   const author = res.user.first_name;
 
-  const query = `INSERT INTO ${unique_name} (name, content, all_fields, type, status, featured_image, author) VALUES (?, ?, ?, ?, ?, ?, ?)`;
+  const query = `INSERT INTO ${unique_name} (name, content, all_fields, type, status, featured_image, author, slug) VALUES (?, ?, ?, ?, ?, ?, ?, ?)`;
   try {
     results = await queryAsync(query, [
       name,
@@ -285,6 +289,7 @@ export async function storeData(
       statusvalue,
       featuredImage,
       author,
+      slug,
     ]);
   } catch (error) {
     console.error("Error fetching user:", error);
@@ -305,9 +310,10 @@ export async function updateData(
   statusvalue,
   featuredImage,
   id,
-  unique_name
+  unique_name,
+  slug
 ) {
-  const query = `UPDATE ${unique_name} SET name = ? , content=  ? , all_fields = ?, type = ?, status = ?, featured_image = ?   WHERE id = ?`;
+  const query = `UPDATE ${unique_name} SET name = ? , content=  ? , all_fields = ?, type = ?, status = ?, featured_image = ?, slug = ?  WHERE id = ?`;
   try {
     await queryAsync(query, [
       name,
@@ -316,6 +322,7 @@ export async function updateData(
       categoryvalue,
       statusvalue,
       featuredImage,
+      slug,
       id,
     ]);
   } catch (error) {

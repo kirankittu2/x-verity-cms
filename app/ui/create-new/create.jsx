@@ -28,6 +28,8 @@ export default function Create({
   const searchParams = useSearchParams();
   const search = searchParams.get("title");
   const searchID = searchParams.get("id");
+  const [renameInputIndex, setRenameInputIndex] = useState(null);
+  const [oldField, setOldField] = useState("");
 
   const status_list = [
     {
@@ -42,9 +44,7 @@ export default function Create({
 
   useEffect(() => {
     if (totaldata == "") {
-      addFields([]);
-      setData([]);
-      setTitle(title.length == 0 && search ? search : title);
+      setTitle((prev) => (prev.length == 0 && search ? search : prev));
     } else {
       addFields(JSON.parse(JSON.parse(totaldata)[0].all_fields));
       setData(JSON.parse(JSON.parse(totaldata)[0].content));
@@ -61,7 +61,7 @@ export default function Create({
       );
       setTitle(JSON.parse(totaldata)[0].name);
     }
-  }, [addFields, totaldata, setData, search, title]);
+  }, [addFields, totaldata, setData, search]);
 
   function handleCategoryData(value) {
     setError(false);
@@ -103,7 +103,8 @@ export default function Create({
         status,
         featuredImage,
         searchID ? searchID : id,
-        unique_name
+        unique_name,
+        transformString(title)
       );
 
       await storeActivity(title, unique_name);
@@ -111,6 +112,40 @@ export default function Create({
       setError(true);
     }
   }
+
+  function renameField(index, value) {
+    const tempFields = allfields;
+    tempFields[index].name = value;
+    data[value] = data[oldField];
+    if (value !== oldField) {
+      delete data[oldField];
+    }
+
+    setData(data);
+    addFields(tempFields);
+    setOldField("");
+    setRenameInputIndex(null);
+  }
+
+  function deleteField(indexToRemove, name) {
+    const tempFields = allfields;
+    let newArray = tempFields.filter((item, index) => index !== indexToRemove);
+    delete data[name];
+
+    setData(data);
+    addFields(newArray);
+  }
+
+  function transformString(input) {
+    return input
+      .trim()
+      .toLowerCase()
+      .replace(/[^a-z0-9\s]/g, "")
+      .replace(/\s+/g, "-");
+  }
+
+  console.log(data);
+  console.log(allfields);
 
   return (
     <>
@@ -132,7 +167,7 @@ export default function Create({
               className="bg-[#F8F8F8] flex-1 p-4 rounded outline-none placeholder:text-black placeholder:text-[15px] mr-2 h-[48px] w-full"
               type="text"
               data-option="heading"
-              value={title}
+              defaultValue={title}
               name="pagetitle"
               onChange={(e) => {
                 setTitle(e.target.value);
@@ -140,13 +175,40 @@ export default function Create({
               }}
               placeholder="Enter Article Title"
             />
+            {title.length > 0 && (
+              <p className="mt-5 text-[14px]">
+                <b>Slug:</b> {transformString(title)}
+              </p>
+            )}
           </div>
           <div className="custom-border h-auto bg-white p-7">
-            {allfields.map((field) => {
+            {allfields.map((field, index) => {
               return (
                 (field.type == "Text" && (
                   <div key={`${field.name}`} className="mb-2">
-                    <div className="mb-2">{field.name}</div>
+                    <div className="mb-2 flex">
+                      {renameInputIndex == index && (
+                        <input
+                          className="border"
+                          defaultValue={field.name}
+                          onFocus={(e) => setOldField(e.target.value)}
+                          onBlur={(e) => renameField(index, e.target.value)}
+                        />
+                      )}
+                      {renameInputIndex !== index && <p>{field.name}</p>}
+                      <div className="ml-auto flex gap-3">
+                        <p
+                          className="cursor-pointer"
+                          onClick={() => setRenameInputIndex(index)}>
+                          Rename
+                        </p>
+                        <p
+                          className="cursor-pointer"
+                          onClick={() => deleteField(index, field.name)}>
+                          delete
+                        </p>
+                      </div>
+                    </div>
                     <div className="w-full h-[50px]">
                       <input
                         className="bg-[#F8F8F8] flex-1 p-4 rounded outline-none placeholder:text-black placeholder:text-[15px] mr-2 h-[48px] w-full "
@@ -169,7 +231,29 @@ export default function Create({
                 )) ||
                 (field.type == "ckEditor" && (
                   <div className="mb-2" key={`${field.name}`}>
-                    <div>{field.name}</div>
+                    <div className="mb-2 flex">
+                      {renameInputIndex == index && (
+                        <input
+                          className="border"
+                          defaultValue={field.name}
+                          onFocus={(e) => setOldField(e.target.value)}
+                          onBlur={(e) => renameField(index, e.target.value)}
+                        />
+                      )}
+                      {renameInputIndex !== index && <p>{field.name}</p>}
+                      <div className="ml-auto flex gap-3">
+                        <p
+                          className="cursor-pointer"
+                          onClick={() => setRenameInputIndex(index)}>
+                          Rename
+                        </p>
+                        <p
+                          className="cursor-pointer"
+                          onClick={() => deleteField(index, field.name)}>
+                          delete
+                        </p>
+                      </div>
+                    </div>
                     <CustomEditor
                       initialdata={
                         data &&

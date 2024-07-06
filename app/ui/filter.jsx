@@ -4,7 +4,7 @@ import Select from "@/app/ui/select";
 import { usePathname, useRouter, useSearchParams } from "next/navigation";
 import { useDebouncedCallback } from "use-debounce";
 
-export default function Filter({ first }) {
+export default function Filter({ main, first }) {
   const searchParams = useSearchParams();
   const pathname = usePathname();
   const { replace } = useRouter();
@@ -31,7 +31,7 @@ export default function Filter({ first }) {
             <input
               className="bg-[#F8F8F8] w-full p-4 rounded outline-none placeholder:text-black placeholder:text-[15px] h-[48px]"
               type="text"
-              placeholder="Enter Article Title"
+              placeholder={`Enter ${main} Title`}
               onChange={(e) => handleSearch(e.target.value)}
             />
           </div>

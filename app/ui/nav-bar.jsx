@@ -12,7 +12,7 @@ export default function NavBar({ page }) {
       <h1 className="text-24-black">{page}</h1>
       <div className="flex">
         <Create />
-        <Link
+        {/* <Link
           className="flex justify-center items-center"
           href="/dashboard/settings">
           <Image
@@ -22,13 +22,13 @@ export default function NavBar({ page }) {
             height={18}
             alt="Settings Button"
           />
-        </Link>
+        </Link> */}
         <form
           action={async () => {
             "use server";
             await signOut();
           }}
-          className="flex items-center">
+          className="flex items-center ml-3">
           <button>
             <Image
               className="cursor-pointer w-auto h-auto"

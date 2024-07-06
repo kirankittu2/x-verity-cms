@@ -4,7 +4,6 @@ import {
   retrieveCategories,
 } from "@/app/lib/data";
 import Table from "@/app/ui/articles/table";
-import Button from "@/app/ui/button";
 import CreateNew from "@/app/ui/create-new";
 import Filter from "@/app/ui/filter";
 import Footer from "@/app/ui/footer";
@@ -37,9 +36,9 @@ export default async function ListOfCaseStudies({ searchParams }) {
       <NavBar page="List Of Case Studies" />
       <main className="pl-10 pr-10 pt-5">
         <h2 className="text-15-grey mb-5">Article Name</h2>
-        <CreateNew name="case_studies" />
+        <CreateNew name="case_studies" main="Case Study" />
         <Suspense>
-          <Filter first={JSON.parse(categories)} />
+          <Filter main="Case Study" first={JSON.parse(categories)} />
         </Suspense>
         <Table
           totaldata={data}

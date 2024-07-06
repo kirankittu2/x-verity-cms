@@ -20,13 +20,13 @@ export default function Pagination({ totalPages = 0 }) {
     ">
       {currentPage == 1 ? (
         <div className="w-[48px] h-full flex justify-center items-center border-r border-[#EBEBEB]">
-          N
+          -
         </div>
       ) : (
         <Link
           className="w-[48px] h-full flex justify-center items-center border-r border-[#EBEBEB]"
           href={createPageURL(currentPage - 1)}>
-          L
+          Prev
         </Link>
       )}
       {pages.map((page) =>
@@ -49,13 +49,13 @@ export default function Pagination({ totalPages = 0 }) {
       )}
       {currentPage == totalPages || totalPages == 0 ? (
         <div className="w-[48px] h-full flex justify-center items-center">
-          N
+          -
         </div>
       ) : (
         <Link
           className="w-[48px] h-full flex justify-center items-center"
           href={createPageURL(currentPage + 1)}>
-          R
+          Next
         </Link>
       )}
     </div>

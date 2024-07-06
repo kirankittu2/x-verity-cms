@@ -54,8 +54,8 @@ const Adminlinks = [
         href: "/dashboard/pages/create-new",
       },
       {
-        id: "list-of-articles",
-        name: "List Of Articles",
+        id: "list-of-pages",
+        name: "List Of Pages",
         href: "/dashboard/pages/list-of-pages",
       },
       {
@@ -92,8 +92,8 @@ const Adminlinks = [
         href: "/dashboard/case_studies/create-new",
       },
       {
-        id: "list-of-articles",
-        name: "List Of Articles",
+        id: "list-of-case-studies",
+        name: "List Of Case Studies",
         href: "/dashboard/case_studies/list-of-case-studies",
       },
       {

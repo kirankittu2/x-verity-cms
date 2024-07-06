@@ -32,9 +32,9 @@ export default async function ListOfArticles({ searchParams }) {
       <NavBar page="List Of Articles" />
       <main className="pl-10 pr-10 pt-5">
         <h2 className="text-15-grey mb-5">Article Name</h2>
-        <CreateNew name="articles" />
+        <CreateNew name="articles" main="Article" />
         <Suspense>
-          <Filter first={JSON.parse(categories)} />
+          <Filter main="Article" first={JSON.parse(categories)} />
         </Suspense>
         <Table
           totaldata={data}

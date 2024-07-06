@@ -23,7 +23,7 @@ export default async function Dashboard() {
         {/* {version && <UpdateUi />} */}
         <div className="mb-10">
           <h2 className="text-15-grey mb-5">Overview</h2>
-          <div className="grid grid-cols-6 gap-x-7">
+          <div className="grid grid-cols-4 gap-x-7">
             <Card
               name="Articles"
               count={articleCount.count}
@@ -52,7 +52,7 @@ export default async function Dashboard() {
               growthPercentage="19%"
               status="Till Date"
             />
-            <Card
+            {/* <Card
               name="Reviews"
               count={articleCount.count}
               growth="increase"
@@ -65,7 +65,7 @@ export default async function Dashboard() {
               growth="increase"
               growthPercentage="19%"
               status="Till Date"
-            />
+            /> */}
           </div>
         </div>
         <div>
