@@ -14,7 +14,7 @@ export default function BrowseFiles() {
       formData.append("files", file);
     });
 
-    const response = await fetch("http://72.167.133.180:3001/files/upload", {
+    const response = await fetch("http://72.167.133.180:3002/files/upload", {
       method: "POST",
       body: formData,
     });

@@ -75,7 +75,7 @@ export default function FileShowCase({ files, totalPages }) {
                       style={{ width: "100%", height: "100%" }}
                       width={150}
                       height={150}
-                      src={`http://72.167.133.180:3001/image/fd44d201fe30ab12d4f825982f375735`}
+                      src={`http://72.167.133.180:3002/image/${file.uniquefilename}`}
                       alt=""
                       dangerouslyallowsvg="true"
                       data-option={file.id}

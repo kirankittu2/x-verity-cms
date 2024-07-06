@@ -65,7 +65,7 @@ export async function dateConversion(originalTimestamp) {
 export async function mutateDBData(name, value, mutateData, unique_name) {
   if (name == "media") {
     if (value == "Delete") {
-      const response = await fetch("http://72.167.133.180:3001/files/delete", {
+      const response = await fetch("http://72.167.133.180:3002/files/delete", {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
