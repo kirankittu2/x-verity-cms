@@ -207,7 +207,13 @@ const Employeelinks = [
 
 export default function NavLinks({ user, menuState }) {
   const pathname = usePathname();
-  const links = user.user.role == "Admin" ? Adminlinks : Employeelinks;
+
+  let links;
+  if (user) {
+    links = user?.user.role == "Admin" ? Adminlinks : Employeelinks;
+  } else {
+    links = [];
+  }
 
   return (
     <>
