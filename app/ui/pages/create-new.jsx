@@ -2,12 +2,12 @@
 
 import dynamic from "next/dynamic";
 import { useEffect, useState } from "react";
-import Button from "../button";
-import Fields from "./filelds";
-import storeActivity, { storeData } from "@/app/lib/data";
-import SelectNew from "../select-new";
 import Image from "next/image";
 import { useSearchParams } from "next/navigation";
+import Button from "../button";
+import SelectNew from "../select-new";
+import Fields from "../create-new/filelds";
+import storeActivity, { storePageData } from "@/app/lib/data";
 
 const CustomEditor = dynamic(() => import("../custom-editor"), { ssr: false });
 
@@ -20,7 +20,7 @@ export default function Create({
   const [popup, togglePopup] = useState(false);
   const [allfields, addFields] = useState([]);
   const [data, setData] = useState([]);
-  const [categoryvalue, updateCategoryValue] = useState("Select An Option");
+  const [parentValue, updateParentValue] = useState("Select An Option");
   const [statusvalue, updateStatusValue] = useState("Select An Option");
   const [title, setTitle] = useState("");
   const [error, setError] = useState(false);
@@ -30,6 +30,7 @@ export default function Create({
   const searchID = searchParams.get("id");
   const [renameInputIndex, setRenameInputIndex] = useState(null);
   const [oldField, setOldField] = useState("");
+  const [parentList, setParentList] = useState([{ name: "(no parent)" }]);
 
   const status_list = [
     {
@@ -49,7 +50,7 @@ export default function Create({
       addFields(JSON.parse(JSON.parse(totaldata)[0].all_fields));
       setData(JSON.parse(JSON.parse(totaldata)[0].content));
       setFeaturedImage(JSON.parse(totaldata)[0].featured_image);
-      updateCategoryValue(
+      updateParentValue(
         JSON.parse(totaldata)[0].type == ""
           ? "Select An Option"
           : JSON.parse(totaldata)[0].type
@@ -63,9 +64,9 @@ export default function Create({
     }
   }, [addFields, totaldata, setData, search]);
 
-  function handleCategoryData(value) {
+  function handleParentData(value) {
     setError(false);
-    updateCategoryValue(() => value);
+    updateParentValue(() => value);
   }
 
   function handleStatusData(value) {
@@ -92,14 +93,14 @@ export default function Create({
   }
 
   async function submitForm() {
-    const category = categoryvalue == "Select An Option" ? "" : categoryvalue;
+    const parent = parentValue == "Select An Option" ? "" : parentValue;
     const status = statusvalue == "Select An Option" ? "" : statusvalue;
-    if (title != "" && category != "" && status != "" && featuredImage != "") {
-      await storeData(
+    if (title != "" && status != "" && featuredImage != "") {
+      await storePageData(
         JSON.stringify(data),
         JSON.stringify(allfields),
         title,
-        category,
+        parent,
         status,
         featuredImage,
         searchID ? searchID : id,
@@ -144,6 +145,9 @@ export default function Create({
       .replace(/\s+/g, "-");
   }
 
+  console.log(data);
+  console.log(allfields);
+
   return (
     <>
       <div className="flex">
@@ -182,7 +186,49 @@ export default function Create({
             {allfields.map((field, index) => {
               return (
                 (field.type == "Text" && (
-                  <TextCompoenent data={data} field={field} />
+                  <div key={`${field.name}`} className="mb-2">
+                    <div className="mb-2 flex">
+                      {renameInputIndex == index && (
+                        <input
+                          className="border"
+                          defaultValue={field.name}
+                          onFocus={(e) => setOldField(e.target.value)}
+                          onBlur={(e) => renameField(index, e.target.value)}
+                        />
+                      )}
+                      {renameInputIndex !== index && <p>{field.name}</p>}
+                      <div className="ml-auto flex gap-3">
+                        <p
+                          className="cursor-pointer"
+                          onClick={() => setRenameInputIndex(index)}>
+                          Rename
+                        </p>
+                        <p
+                          className="cursor-pointer"
+                          onClick={() => deleteField(index, field.name)}>
+                          delete
+                        </p>
+                      </div>
+                    </div>
+                    <div className="w-full h-[50px]">
+                      <input
+                        className="bg-[#F8F8F8] flex-1 p-4 rounded outline-none placeholder:text-black placeholder:text-[15px] mr-2 h-[48px] w-full "
+                        type="text"
+                        value={
+                          data &&
+                          data != undefined &&
+                          data.length != 0 &&
+                          data[field.name] != undefined
+                            ? `${data[field.name]}`
+                            : ""
+                        }
+                        data-option="Text"
+                        onChange={prepareData}
+                        name={field.name}
+                        placeholder="Text Field"
+                      />
+                    </div>
+                  </div>
                 )) ||
                 (field.type == "ckEditor" && (
                   <div className="mb-2" key={`${field.name}`}>
@@ -229,10 +275,10 @@ export default function Create({
         </div>
         <div className="w-3/12 bg-white ml-10 custom-border p-7">
           <SelectNew
-            name="Category"
-            value={categoryvalue}
-            handleData={handleCategoryData}
-            list={category_list}
+            name="Parent"
+            value={parentValue}
+            handleData={handleParentData}
+            list={JSON.stringify(parentList)}
           />
           <SelectNew
             name="Status"
@@ -273,53 +319,5 @@ export default function Create({
         />
       )}
     </>
-  );
-}
-
-function TextCompoenent({ data, field }) {
-  return (
-    <div key={`${field.name}`} className="mb-2">
-      <div className="mb-2 flex">
-        {renameInputIndex == index && (
-          <input
-            className="border"
-            defaultValue={field.name}
-            onFocus={(e) => setOldField(e.target.value)}
-            onBlur={(e) => renameField(index, e.target.value)}
-          />
-        )}
-        {renameInputIndex !== index && <p>{field.name}</p>}
-        <div className="ml-auto flex gap-3">
-          <p
-            className="cursor-pointer"
-            onClick={() => setRenameInputIndex(index)}>
-            Rename
-          </p>
-          <p
-            className="cursor-pointer"
-            onClick={() => deleteField(index, field.name)}>
-            delete
-          </p>
-        </div>
-      </div>
-      <div className="w-full h-[50px]">
-        <input
-          className="bg-[#F8F8F8] flex-1 p-4 rounded outline-none placeholder:text-black placeholder:text-[15px] mr-2 h-[48px] w-full "
-          type="text"
-          value={
-            data &&
-            data != undefined &&
-            data.length != 0 &&
-            data[field.name] != undefined
-              ? `${data[field.name]}`
-              : ""
-          }
-          data-option="Text"
-          onChange={prepareData}
-          name={field.name}
-          placeholder="Text Field"
-        />
-      </div>
-    </div>
   );
 }

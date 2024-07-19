@@ -20,7 +20,7 @@ export default function Pagination({ totalPages = 0 }) {
     ">
       {currentPage == 1 ? (
         <div className="w-[48px] h-full flex justify-center items-center border-r border-[#EBEBEB]">
-          -
+          Prev
         </div>
       ) : (
         <Link
@@ -49,7 +49,7 @@ export default function Pagination({ totalPages = 0 }) {
       )}
       {currentPage == totalPages || totalPages == 0 ? (
         <div className="w-[48px] h-full flex justify-center items-center">
-          -
+          Next
         </div>
       ) : (
         <Link

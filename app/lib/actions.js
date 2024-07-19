@@ -47,7 +47,6 @@ const storeCategorySchema = z.object({
 });
 
 export async function createCategory(formData) {
-  console.log(formData);
   const name = formData.get("category");
   const main = formData.get("main");
   const page = formData.get("page");
@@ -327,4 +326,24 @@ export async function createUser(formData) {
   if (parsedCredentials.success) {
     await insertUser(parsedCredentials.data);
   }
+}
+
+export async function deleteForm(formData) {
+  const id = formData.get("id");
+  try {
+    const query1 = `DELETE FROM form_data WHERE id = ?`;
+    const query2 = `DELETE FROM forms WHERE id = ?`;
+    const values = [id];
+
+    const res1 = await queryAsync(query1, values);
+    const res2 = await queryAsync(query2, values);
+
+    if (res1 && res2) {
+    }
+  } catch (e) {
+    console.log(e);
+    return { success: false };
+  }
+
+  redirect("/dashboard/forms");
 }

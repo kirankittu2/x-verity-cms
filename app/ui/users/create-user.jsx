@@ -21,6 +21,7 @@ export default function CreateUser() {
       ...formData,
       [e.target.name]: e.target.value,
     });
+
   };
 
   async function handleSubmit(e) {
@@ -32,9 +33,15 @@ export default function CreateUser() {
     });
 
     formDataObject.append("role", seletedValue);
-
     await createUser(formDataObject);
+    setFormData({
+      firstName: "",
+      lastName: "",
+      email: "",
+      password: "",
+    })
   }
+
 
   return (
     <form onSubmit={(e) => handleSubmit(e)}>

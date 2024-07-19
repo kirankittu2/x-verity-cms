@@ -1,13 +1,16 @@
 "use client";
 
-import { useState } from "react";
-import Button from "../button";
-import { storeFormData } from "@/app/lib/data";
 import { useRouter } from "next/navigation";
+import Button from "../button";
+import { useState } from "react";
+import { updateTablesColumns } from "@/app/lib/data";
 
-export default function FormFields() {
-  const [fields, setFields] = useState([""]);
-  const [formName, setFormName] = useState("");
+export default function UpdateForm({ data, id }) {
+  const parsedData = JSON.parse(data)[0];
+  const parsedFields = JSON.parse(parsedData.fields);
+  console.log(parsedFields);
+  const [fields, setFields] = useState(parsedFields);
+  const [formName, setFormName] = useState(parsedData.form_name);
   const [error, setError] = useState({
     fields: false,
     server: false,
@@ -48,7 +51,7 @@ export default function FormFields() {
       return;
     }
 
-    const res = await storeFormData(formName, fields);
+    const res = await updateTablesColumns(formName, fields, id);
 
     if (res.success) {
       router.push("/dashboard/forms");
@@ -84,6 +87,7 @@ export default function FormFields() {
         <input
           className="bg-[#F8F8F8] w-full p-4 rounded outline-none placeholder:text-black placeholder:text-[15px] h-[48px]"
           type="text"
+          defaultValue={formName}
           onChange={(e) => {
             setError({
               ...error,
@@ -102,7 +106,7 @@ export default function FormFields() {
       <div className="mt-5">
         {error.fields && <p>Please fill all the fields</p>}
         {error.server && <p>Something went wrong</p>}
-        <Button onClick={handleSubmit} name="Create Form" />
+        <Button onClick={handleSubmit} name="Update Form" />
       </div>
     </>
   );

@@ -22,13 +22,13 @@ export default function Select({ data, name }) {
 
     if (selectedValue) {
       if (name == "date") {
-        params.set("time", selectedValue);
+        params.set("status", selectedValue);
       } else if (name == "image_types") {
         params.set("type", selectedValue);
         params.set("page", 1);
       }
     } else {
-      params.delete("time");
+      params.delete("status");
       params.delete("type");
     }
     replace(`${pathname}?${params.toString()}`);
@@ -40,9 +40,9 @@ export default function Select({ data, name }) {
       onMouseLeave={dropdownToggle}>
       <div className="w-full bg-[#F8F8F8] pl-[1.24rem] pb-[1.24rem] pt-[1.24rem] pr-[100px] rounded h-[48px] flex items-center text-15-black">
         {name == "date"
-          ? searchParams.get("time") == undefined
+          ? searchParams.get("status") == undefined
             ? "Select an option"
-            : searchParams.get("time")?.toString()
+            : searchParams.get("status")?.toString()
           : ""}
         {name == "image_types"
           ? searchParams.get("type") == undefined
@@ -68,17 +68,18 @@ export default function Select({ data, name }) {
               All
             </div>
           )}
-          {data.map((item) => {
-            return (
-              <div
-                key={item.type}
-                data-option={item.type}
-                className="h-[48px] hover:bg-black hover:text-white text-15-black flex items-center p-[1.24rem] border-b border-[#DCDCDC]"
-                onClick={updateValue}>
-                {item.type}
-              </div>
-            );
-          })}
+          {data &&
+            data.map((item) => {
+              return (
+                <div
+                  key={item.type}
+                  data-option={item.type}
+                  className="h-[48px] hover:bg-black hover:text-white text-15-black flex items-center p-[1.24rem] border-b border-[#DCDCDC]"
+                  onClick={updateValue}>
+                  {item.type}
+                </div>
+              );
+            })}
         </div>
       )}
     </div>

@@ -1,16 +1,24 @@
+import { deleteForm } from "@/app/lib/actions";
 import { fetchFormData } from "@/app/lib/data";
+import Button from "@/app/ui/button";
 import NavBar from "@/app/ui/nav-bar";
+import Link from "next/link";
 
 export default async function Form({ params }) {
   const formData = await fetchFormData(params.id);
   const parsedFormData = JSON.parse(formData);
-  console.log(parsedFormData);
+
   return (
     <div className="flex flex-col h-full">
       <NavBar page={parsedFormData.length > 0 && parsedFormData[0].form_name} />
       <main className="pl-10 pr-10 pt-5">
         <h2 className="text-15-grey mb-5">Form Data</h2>
-        <div className="custom-border bg-white">
+        <Link
+          href={`/dashboard/forms/edit/${params.id}`}
+          className="block w-fit">
+          <Button name="Edit Form" />
+        </Link>
+        <div className="custom-border mt-5 mb-5 bg-white">
           <table className="w-full">
             <thead className="border-b text-center text-15-black font-bold">
               <tr>
@@ -44,6 +52,10 @@ export default async function Form({ params }) {
             </tbody>
           </table>
         </div>
+        <form action={deleteForm}>
+          <input hidden name="id" value={params.id}></input>
+          <Button name="Delete Form" />
+        </form>
       </main>
     </div>
   );

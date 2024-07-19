@@ -75,7 +75,7 @@ export default function Table({ totaldata, totalPages, unique_name }) {
             </tr>
           </thead>
           <tbody className="text-15-black activity-table-body text-center">
-            {JSON.parse(totaldata).map((activity) => {
+            {totaldata.map((activity) => {
               return (
                 <tr data-option={activity.id} key={activity.id}>
                   <td className="px-5 p-2 flex justify-center mt-3">

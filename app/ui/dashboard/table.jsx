@@ -36,7 +36,7 @@ export default async function Table() {
                 </td>
                 <DateTable activity={activity} />
                 <td className="px-5 p-4">{activity.author}</td>
-                <td className="px-5 p-4 ">
+                {/* <td className="px-5 p-4 ">
                   <Image
                     className="cursor-pointer w-auto h-auto"
                     src={menudots}
@@ -44,7 +44,7 @@ export default async function Table() {
                     height={4}
                     alt="Menu button"
                   />
-                </td>
+                </td> */}
               </tr>
             );
           })}

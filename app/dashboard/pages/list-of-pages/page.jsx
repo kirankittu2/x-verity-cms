@@ -11,36 +11,38 @@ import NavBar from "@/app/ui/nav-bar";
 import { Suspense } from "react";
 
 export default async function ListOfPages({ searchParams }) {
+  const table_name = "pages";
   const imageTitle = searchParams?.title || "";
   const imageType = searchParams?.type || "";
   const imageTime = searchParams?.time || "";
   const currentPage = searchParams?.page || 1;
 
-  const data = await retrieveAll(
-    "pages",
-    imageTitle,
-    imageType,
-    imageTime,
-    currentPage - 1
+  const data = JSON.parse(
+    await retrieveAll(
+      table_name,
+      imageTitle,
+      imageType,
+      imageTime,
+      currentPage - 1
+    )
   );
-  const categories = await retrieveCategories("pages");
-  const totalPages = await fetchPageNumber(
-    "pages",
-    imageTitle,
-    imageType,
-    imageTime
-  );
+  const categories = await retrieveCategories(table_name);
+  console.log(categories);
 
   return (
     <div className="flex flex-col h-full">
       <NavBar page="List Of Pages" />
       <main className="pl-10 pr-10 pt-5">
         <h2 className="text-15-grey mb-5">Article Name</h2>
-        <CreateNew name="pages" main="Page" />
+        <CreateNew name={table_name} main="Page" />
         <Suspense>
           <Filter main="Page" first={JSON.parse(categories)} />
         </Suspense>
-        <Table totaldata={data} totalPages={totalPages} unique_name="pages" />
+        <Table
+          totaldata={data[0]}
+          totalPages={data[1]}
+          unique_name={table_name}
+        />
       </main>
       <Footer />
     </div>

@@ -5,6 +5,7 @@ var connection = mysql.createConnection({
   user: "qcadmin",
   password: `Dj"Hi4PaJt9Kt_^`,
   database: "qcadmin_xv_cms",
+  multipleStatements: true,
 });
 
 connection.connect((err) => {

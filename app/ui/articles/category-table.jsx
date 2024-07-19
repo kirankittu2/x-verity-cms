@@ -6,7 +6,7 @@ import { useState } from "react";
 import Button from "../button";
 import { operations } from "@/app/lib/data";
 
-export default function CategoryTable({ totaldata, unique_name }) {
+export default function CategoryTable({ totaldata, totalPages, unique_name }) {
   const [categoryID, storecategoryID] = useState([]);
   const data = ["Delete"];
 
@@ -69,7 +69,7 @@ export default function CategoryTable({ totaldata, unique_name }) {
             </tr>
           </thead>
           <tbody className="text-15-black activity-table-body text-center">
-            {JSON.parse(totaldata).map((activity) => {
+            {totaldata.map((activity) => {
               return (
                 <tr key={activity.id}>
                   <td className="px-5 p-2 flex justify-center mt-3">
@@ -99,6 +99,7 @@ export default function CategoryTable({ totaldata, unique_name }) {
         </table>
         <Mutation
           name="category"
+          totalPages={totalPages}
           data={data}
           mutateData={categoryID}
           storeImageID={storecategoryID}

@@ -4,7 +4,7 @@ import { useState } from "react";
 import Button from "../button";
 
 export default function Fields({ togglePopup, popup, addFields, allfields }) {
-  const fields = ["Text", "ckEditor"];
+  const fields = ["Text", "ckEditor", "Group"];
   const [selectedField, selectField] = useState("");
   const [fieldName, setFieldName] = useState("");
   const [error, setError] = useState(false);
@@ -32,6 +32,7 @@ export default function Fields({ togglePopup, popup, addFields, allfields }) {
       const data = {
         name: formatString(fieldName),
         type: selectedField,
+        children: [],
       };
       addFields([...allfields, data]);
 

@@ -4,12 +4,12 @@ import Select from "@/app/ui/select";
 import { usePathname, useRouter, useSearchParams } from "next/navigation";
 import { useDebouncedCallback } from "use-debounce";
 
-export default function Filter({ main, first }) {
+export default function Filter({ main, first, page = "" }) {
   const searchParams = useSearchParams();
   const pathname = usePathname();
   const { replace } = useRouter();
 
-  const second = [{ type: "Latest" }, { type: "Oldest" }];
+  const second = [{ type: "Draft" }, { type: "Publish" }];
 
   const handleSearch = useDebouncedCallback((term) => {
     const params = new URLSearchParams(searchParams);
@@ -39,10 +39,12 @@ export default function Filter({ main, first }) {
             <h3 className="text-15-grey mb-3">Category</h3>
             <Select data={first} name="image_types" />
           </div>
-          <div className="flex-1 mr-2">
-            <h3 className="text-15-grey mb-3">Status</h3>
-            <Select data={second} name="date" />
-          </div>
+          {page !== "media" &&
+            <div className="flex-1 mr-2">
+              <h3 className="text-15-grey mb-3">Status</h3>
+              <Select data={second} name="date" />
+            </div>
+          }
         </form>
       </div>
     </>

@@ -4,8 +4,11 @@ import CreateCategory from "@/app/ui/articles/create-category";
 import Footer from "@/app/ui/footer";
 import NavBar from "@/app/ui/nav-bar";
 
-export default async function Category() {
-  const data = await getAllCategories("case_studies_category");
+export default async function Category({searchParams}) {
+  const table_name = "case_studies_category"
+  const currentPage = searchParams?.page || 1;
+
+  const data = JSON.parse(await getAllCategories(table_name, currentPage - 1));
   return (
     <div className="flex flex-col h-full">
       <NavBar page="Case Study Categories" />
@@ -13,11 +16,12 @@ export default async function Category() {
         <h2 className="text-15-grey mb-5">Create New</h2>
         <CreateCategory
           parent="case_studies"
-          table_name="case_studies_category"
+          table_name={table_name}
         />
         <CategoryTable
-          totaldata={JSON.stringify(data)}
-          unique_name="case_studies_category"
+          totaldata={data[0]}
+          totalPages={data[1]}
+          unique_name={table_name}
         />
       </main>
       <Footer />

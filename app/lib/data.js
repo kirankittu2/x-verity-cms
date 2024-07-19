@@ -8,20 +8,46 @@ import bcrypt from "bcrypt";
 import { z } from "zod";
 
 const IMAGES_PER_PAGE = 18;
-export async function retrieveImages(name, type, times, currentPage) {
+const ITEMS_PER_PAGES = 10;
+
+export async function retrieveImages(name, type, currentPage) {
   const offset = currentPage * IMAGES_PER_PAGE;
 
-  const { query, values } = handleRetrievePages(
-    "media",
-    name,
-    type,
-    times,
-    offset,
-    IMAGES_PER_PAGE
-  );
+  let query1 = `SELECT * FROM ?? WHERE 1=1`;
+  let query2 = `SELECT * FROM ?? WHERE 1=1`;
+  const params = ["media"];
+
+  if (name !== null && name !== undefined) {
+    query1 += ` AND name LIKE ?`;
+    query2 += ` AND name LIKE ?`;
+    params.push(`%${name}%`);
+  }
+
+  if (
+    type !== null &&
+    type !== undefined &&
+    type !== "" &&
+    type !== "All Media Items"
+  ) {
+    query1 += ` AND type = ?`;
+    query2 += ` AND type = ?`;
+    params.push(type);
+  }
+
+  query1 += ` LIMIT ?`;
+  params.push(ITEMS_PER_PAGES);
+
+  if (offset !== null && offset !== undefined) {
+    query1 += ` OFFSET ?`;
+    params.push(offset);
+  }
+
   try {
-    const results = await queryAsync(query, values);
-    return JSON.stringify(results);
+    const results1 = await queryAsync(query1, params);
+    const results2 = await queryAsync(query1, params);
+    const totalPages = Math.ceil(Number(results2.length) / ITEMS_PER_PAGES);
+
+    return JSON.stringify([results1, totalPages]);
   } catch (error) {
     console.error("Error fetching user:", error);
     return null;
@@ -44,21 +70,57 @@ export async function fetchFilePages(name, type, times) {
     return null;
   }
 }
-const ITEMS_PER_PAGES = 10;
-export async function retrieveAll(unique_name, name, type, times, currentPage) {
+
+export async function retrieveAll(
+  unique_name,
+  name,
+  type,
+  status,
+  currentPage
+) {
   const offset = currentPage * ITEMS_PER_PAGES;
 
-  const { query, values } = handleRetrievePages(
-    unique_name,
-    name,
-    type,
-    times,
-    offset,
-    ITEMS_PER_PAGES
-  );
+  let query1 = `SELECT * FROM ?? WHERE 1=1`;
+  let query2 = `SELECT * FROM ?? WHERE 1=1`;
+  const params = [unique_name];
+
+  if (name !== null && name !== undefined) {
+    query1 += ` AND name LIKE ?`;
+    query2 += ` AND name LIKE ?`;
+    params.push(`%${name}%`);
+  }
+
+  if (
+    type !== null &&
+    type !== undefined &&
+    type !== "" &&
+    type !== "All Media Items"
+  ) {
+    query1 += ` AND type = ?`;
+    query2 += ` AND type = ?`;
+    params.push(type);
+  }
+
+  if (status !== null && status !== undefined && status !== "") {
+    query1 += ` AND status = ?`;
+    query2 += ` AND status = ?`;
+    params.push(status);
+  }
+
+  query1 += ` LIMIT ?`;
+  params.push(ITEMS_PER_PAGES);
+
+  if (offset !== null && offset !== undefined) {
+    query1 += ` OFFSET ?`;
+    params.push(offset);
+  }
+
   try {
-    const results = await queryAsync(query, values);
-    return JSON.stringify(results);
+    const results1 = await queryAsync(query1, params);
+    const results2 = await queryAsync(query2, params);
+    const totalPages = Math.ceil(Number(results2.length) / ITEMS_PER_PAGES);
+
+    return JSON.stringify([results1, totalPages]);
   } catch (error) {
     console.error("Error fetching user:", error);
     return null;
@@ -80,28 +142,6 @@ export async function fetchPageNumber(unique_name, name, type, times) {
   } catch (error) {
     console.error("Error fetching user:", error);
     return null;
-  }
-}
-
-function handleRetrievePages(db_name, name, type, times, offset, pages) {
-  if (
-    type == "" ||
-    type == "All Media Items" ||
-    (type.length == 0 && times.length == 0 && name.length == 0)
-  ) {
-    const query = `SELECT * FROM ${db_name} WHERE name LIKE '%${name}%' ORDER BY created_on ${
-      times.length != 0 ? (times == "Latest" ? "DESC" : "ASC") : "DESC"
-    } LIMIT ${pages} OFFSET ${offset}`;
-    const values = [];
-
-    return { query, values };
-  } else {
-    const query = `SELECT * FROM ${db_name} WHERE type = ? AND name LIKE '%${name}%' ORDER BY created_on ${
-      times.length != 0 ? (times == "Latest" ? "DESC" : "ASC") : "DESC"
-    } LIMIT ${pages} OFFSET ${offset}`;
-    const values = [type];
-
-    return { query, values };
   }
 }
 
@@ -183,7 +223,7 @@ export async function deletePages(data, unique_name) {
     console.error("Error fetching user:", error);
     return null;
   }
-
+  console.log(`/${unique_name}/list-of-${unique_name}`);
   revalidatePath(`/${unique_name}/list-of-${unique_name}`);
 }
 
@@ -196,7 +236,7 @@ export async function mutateStatus(data, value, unique_name) {
     return null;
   }
 
-  revalidatePath(`/${unique_name}/list-of-${unique_name}`);
+  revalidatePath(`/dashboard/${unique_name}/list-of-${unique_name}`);
 }
 
 export async function getUser(email) {
@@ -226,6 +266,18 @@ const storeDataSchema = z.object({
   allfields: z.string().optional(),
   name: z.string(),
   categoryvalue: z.string(),
+  statusvalue: z.string(),
+  featuredImage: z.string().url(),
+  id: z.union([z.string(), z.number()]).optional(),
+  unique_name: z.string(),
+  slug: z.string(),
+});
+
+const storePageDataSchema = z.object({
+  data: z.string(),
+  allfields: z.string().optional(),
+  name: z.string(),
+  parentvalue: z.string(),
   statusvalue: z.string(),
   featuredImage: z.string().url(),
   id: z.union([z.string(), z.number()]).optional(),
@@ -302,6 +354,76 @@ export async function storeData(
   );
 }
 
+export async function storePageData(
+  data,
+  allfields,
+  name,
+  parentvalue,
+  statusvalue,
+  featuredImage,
+  id,
+  unique_name,
+  slug
+) {
+  let results = {};
+
+  const validationResult = storePageDataSchema.safeParse({
+    data,
+    allfields,
+    name,
+    parentvalue,
+    statusvalue,
+    featuredImage,
+    id,
+    unique_name,
+    slug,
+  });
+
+  if (!validationResult.success) {
+    console.error("Validation error:", validationResult.error);
+    return null;
+  }
+  if (id !== "") {
+    updateData(
+      name,
+      data,
+      allfields,
+      parentvalue,
+      statusvalue,
+      featuredImage,
+      id,
+      unique_name,
+      slug
+    );
+    return;
+  }
+  const res = await auth();
+  const author = res.user.first_name;
+
+  const query = `INSERT INTO ${unique_name} (name, content, all_fields, parent, status, featured_image, author, slug) VALUES (?, ?, ?, ?, ?, ?, ?, ?)`;
+  try {
+    results = await queryAsync(query, [
+      name,
+      data,
+      allfields,
+      parentvalue,
+      statusvalue,
+      featuredImage,
+      author,
+      slug,
+    ]);
+  } catch (error) {
+    console.error("Error fetching user:", error);
+    return null;
+  }
+
+  revalidatePath(`/${unique_name}/list-of-articles`);
+  redirect(
+    `/dashboard/${unique_name}/${results.insertId}/edit?id=${results.insertId}`,
+    "push"
+  );
+}
+
 export async function updateData(
   name,
   data,
@@ -320,6 +442,37 @@ export async function updateData(
       data,
       allfields,
       categoryvalue,
+      statusvalue,
+      featuredImage,
+      slug,
+      id,
+    ]);
+  } catch (error) {
+    console.error("Error fetching user:", error);
+    return null;
+  }
+
+  revalidatePath(`/${unique_name}/list-of-articles`);
+}
+
+export async function updatePageData(
+  name,
+  data,
+  allfields,
+  parentValue,
+  statusvalue,
+  featuredImage,
+  id,
+  unique_name,
+  slug
+) {
+  const query = `UPDATE ${unique_name} SET name = ? , content=  ? , all_fields = ?, parent = ?, status = ?, featured_image = ?, slug = ?  WHERE id = ?`;
+  try {
+    await queryAsync(query, [
+      name,
+      data,
+      allfields,
+      parentValue,
       statusvalue,
       featuredImage,
       slug,
@@ -355,11 +508,29 @@ export async function getPageById(id, unique_name) {
   }
 }
 
-export async function getAllCategories(unique_name) {
+export async function getAllCategories(unique_name, currentPage) {
+  const offset = currentPage * ITEMS_PER_PAGES;
+  const query1 = `SELECT id, name FROM ${unique_name} LIMIT ? OFFSET ?`;
+  const query2 = `SELECT id, name FROM ${unique_name}`;
+
+  try {
+    const results1 = await queryAsync(query1, [ITEMS_PER_PAGES, offset]);
+    const results2 = await queryAsync(query2);
+    const totalPages = Math.ceil(Number(results2.length) / ITEMS_PER_PAGES);
+    return JSON.stringify([results1, totalPages]);
+  } catch (error) {
+    console.error("Error fetching user:", error);
+    return null;
+  }
+}
+
+export async function getAllCategoriesWithoutOffset(unique_name) {
   const query = `SELECT id, name FROM ${unique_name}`;
+
   try {
     const results = await queryAsync(query);
-    return results;
+    console.log(results);
+    return JSON.stringify(results);
   } catch (error) {
     console.error("Error fetching user:", error);
     return null;
@@ -632,13 +803,13 @@ export async function storeFormData(formName, fields) {
 
     await queryAsync(query, values);
     await createColumnsIfNeeded(fields);
-
-    revalidatePath("/dashboard/forms");
-    return { success: true };
   } catch (e) {
     console.log(e);
     return { success: false };
   }
+
+  revalidatePath("/dashboard/forms");
+  return { success: true };
 }
 
 export async function fetchAllForms() {
@@ -654,12 +825,34 @@ export async function fetchAllForms() {
 }
 
 export async function fetchFormData(id) {
-  console.log(id);
   try {
     const query = `SELECT * FROM forms t1 JOIN form_data t2 ON t1.id = t2.id WHERE t1.id = ?`;
-
     const results = await queryAsync(query, [id]);
     return JSON.stringify(results);
+  } catch (e) {
+    console.log(e);
+    return { success: false };
+  }
+}
+
+export async function fetchTablesColumns(id) {
+  try {
+    const query = `SELECT * FROM forms WHERE id = ?`;
+    const results = await queryAsync(query, [id]);
+    return JSON.stringify(results);
+  } catch (e) {
+    console.log(e);
+    return { success: false };
+  }
+}
+
+export async function updateTablesColumns(formName, fields, id) {
+  try {
+    const query = `UPDATE forms SET form_name = ?, fields = ? WHERE id = ?;`;
+    const values = [formName, JSON.stringify(fields), id];
+    await queryAsync(query, values);
+
+    return { success: true };
   } catch (e) {
     console.log(e);
     return { success: false };

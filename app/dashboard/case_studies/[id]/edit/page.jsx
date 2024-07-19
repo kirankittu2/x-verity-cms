@@ -1,11 +1,17 @@
-import { getAllCategories, getPageById } from "@/app/lib/data";
+import {
+  getAllCategories,
+  getAllCategoriesWithoutOffset,
+  getPageById,
+} from "@/app/lib/data";
 import Footer from "@/app/ui/footer";
 import NavBar from "@/app/ui/nav-bar";
 import Create from "@/app/ui/create-new/create";
 
 export default async function Edit({ params }) {
   const data = await getPageById(params.id, "case_studies");
-  const category_list = await getAllCategories("case_studies_category");
+  const category_list = await getAllCategoriesWithoutOffset(
+    "case_studies_category"
+  );
 
   return (
     <div className="flex flex-col h-full">
