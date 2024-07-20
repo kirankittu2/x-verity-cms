@@ -182,7 +182,49 @@ export default function Create({
             {allfields.map((field, index) => {
               return (
                 (field.type == "Text" && (
-                  <TextCompoenent data={data} field={field} />
+                  <div key={`${field.name}`} className="mb-2">
+                    <div className="mb-2 flex">
+                      {renameInputIndex == index && (
+                        <input
+                          className="border"
+                          defaultValue={field.name}
+                          onFocus={(e) => setOldField(e.target.value)}
+                          onBlur={(e) => renameField(index, e.target.value)}
+                        />
+                      )}
+                      {renameInputIndex !== index && <p>{field.name}</p>}
+                      <div className="ml-auto flex gap-3">
+                        <p
+                          className="cursor-pointer"
+                          onClick={() => setRenameInputIndex(index)}>
+                          Rename
+                        </p>
+                        <p
+                          className="cursor-pointer"
+                          onClick={() => deleteField(index, field.name)}>
+                          delete
+                        </p>
+                      </div>
+                    </div>
+                    <div className="w-full h-[50px]">
+                      <input
+                        className="bg-[#F8F8F8] flex-1 p-4 rounded outline-none placeholder:text-black placeholder:text-[15px] mr-2 h-[48px] w-full "
+                        type="text"
+                        value={
+                          data &&
+                          data != undefined &&
+                          data.length != 0 &&
+                          data[field.name] != undefined
+                            ? `${data[field.name]}`
+                            : ""
+                        }
+                        data-option="Text"
+                        onChange={prepareData}
+                        name={field.name}
+                        placeholder="Text Field"
+                      />
+                    </div>
+                  </div>
                 )) ||
                 (field.type == "ckEditor" && (
                   <div className="mb-2" key={`${field.name}`}>
@@ -273,53 +315,5 @@ export default function Create({
         />
       )}
     </>
-  );
-}
-
-function TextCompoenent({ data, field }) {
-  return (
-    <div key={`${field.name}`} className="mb-2">
-      <div className="mb-2 flex">
-        {renameInputIndex == index && (
-          <input
-            className="border"
-            defaultValue={field.name}
-            onFocus={(e) => setOldField(e.target.value)}
-            onBlur={(e) => renameField(index, e.target.value)}
-          />
-        )}
-        {renameInputIndex !== index && <p>{field.name}</p>}
-        <div className="ml-auto flex gap-3">
-          <p
-            className="cursor-pointer"
-            onClick={() => setRenameInputIndex(index)}>
-            Rename
-          </p>
-          <p
-            className="cursor-pointer"
-            onClick={() => deleteField(index, field.name)}>
-            delete
-          </p>
-        </div>
-      </div>
-      <div className="w-full h-[50px]">
-        <input
-          className="bg-[#F8F8F8] flex-1 p-4 rounded outline-none placeholder:text-black placeholder:text-[15px] mr-2 h-[48px] w-full "
-          type="text"
-          value={
-            data &&
-            data != undefined &&
-            data.length != 0 &&
-            data[field.name] != undefined
-              ? `${data[field.name]}`
-              : ""
-          }
-          data-option="Text"
-          onChange={prepareData}
-          name={field.name}
-          placeholder="Text Field"
-        />
-      </div>
-    </div>
   );
 }

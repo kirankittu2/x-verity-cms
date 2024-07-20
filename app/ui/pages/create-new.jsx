@@ -8,6 +8,8 @@ import Button from "../button";
 import SelectNew from "../select-new";
 import Fields from "../create-new/filelds";
 import storeActivity, { storePageData } from "@/app/lib/data";
+import curvedArrow from "@/public/curved-arrow.png";
+import GroupFields from "../create-new/group-fields";
 
 const CustomEditor = dynamic(() => import("../custom-editor"), { ssr: false });
 
@@ -18,9 +20,11 @@ export default function Create({
   unique_name,
 }) {
   const [popup, togglePopup] = useState(false);
+  const [groupPopup, toggleGroupPopup] = useState(false);
   const [allfields, addFields] = useState([]);
   const [data, setData] = useState([]);
   const [parentValue, updateParentValue] = useState("Select An Option");
+  const [groupParentValue, setGroupParentValue] = useState("");
   const [statusvalue, updateStatusValue] = useState("Select An Option");
   const [title, setTitle] = useState("");
   const [error, setError] = useState(false);
@@ -74,14 +78,28 @@ export default function Create({
     updateStatusValue(() => value);
   }
 
-  function prepareData(event, sentdata = "", fieldname = "") {
+  function prepareData(event, parent, sentdata = "", fieldname = "") {
+    if (parent != "" && event != "") {
+      const name = event.currentTarget.getAttribute("name");
+      const value = event.target.value;
+      mutateGroupData(name, value, parent);
+      return;
+    }
+
+    if (parent != "" && event == "") {
+      mutateGroupData(fieldname, sentdata, parent);
+      return;
+    }
+
     if (event != "") {
       const name = event.currentTarget.getAttribute("name");
       const value = event.target.value;
 
       mutateData(name, value);
+      return;
     } else {
       mutateData(fieldname, sentdata);
+      return;
     }
   }
 
@@ -90,6 +108,21 @@ export default function Create({
       ...prevData,
       [name]: data,
     }));
+  }
+
+  function mutateGroupData(name, data, parent) {
+    setData((prevData) => {
+      const parentArray = prevData[parent] || [];
+      const updatedArray = parentArray.filter(
+        (item) => !Object.keys(item).includes(name)
+      );
+      updatedArray.push({ [name]: data });
+
+      return {
+        ...prevData,
+        [parent]: updatedArray,
+      };
+    });
   }
 
   async function submitForm() {
@@ -116,25 +149,74 @@ export default function Create({
 
   function renameField(index, value) {
     const tempFields = allfields;
-    tempFields[index].name = value;
-    data[value] = data[oldField];
-    if (value !== oldField) {
-      delete data[oldField];
-    }
+    const tempData = data;
+    const renameInFields = (fieldsArray) => {
+      fieldsArray.forEach((field) => {
+        if (field.name === oldField) {
+          field.name = value;
+        }
+        if (field.children && field.children.length > 0) {
+          renameInFields(field.children);
+        }
+      });
+    };
 
-    setData(data);
+    const renameInData = (dataObject) => {
+      if (dataObject.hasOwnProperty(oldField)) {
+        dataObject[value] = dataObject[oldField];
+        delete dataObject[oldField];
+      }
+      for (const key in dataObject) {
+        if (Array.isArray(dataObject[key])) {
+          dataObject[key].forEach((item) => renameInData(item));
+        } else if (typeof dataObject[key] === "object") {
+          renameInData(dataObject[key]);
+        }
+      }
+    };
+
+    renameInFields(tempFields);
+    renameInData(tempData);
+    setData(tempData);
     addFields(tempFields);
     setOldField("");
     setRenameInputIndex(null);
   }
 
   function deleteField(indexToRemove, name) {
-    const tempFields = allfields;
-    let newArray = tempFields.filter((item, index) => index !== indexToRemove);
-    delete data[name];
+    const tempFields = JSON.parse(JSON.stringify(allfields));
+    const tempData = JSON.parse(JSON.stringify(data));
 
-    setData(data);
-    addFields(newArray);
+    const deleteInFields = (fieldsArray) => {
+      for (let i = fieldsArray.length - 1; i >= 0; i--) {
+        if (fieldsArray[i].name === name) {
+          fieldsArray.splice(i, 1);
+        } else if (
+          fieldsArray[i].children &&
+          fieldsArray[i].children.length > 0
+        ) {
+          deleteInFields(fieldsArray[i].children);
+        }
+      }
+    };
+
+    const deleteInData = (dataObject) => {
+      if (dataObject.hasOwnProperty(name)) {
+        delete dataObject[name];
+      }
+      for (const key in dataObject) {
+        if (Array.isArray(dataObject[key])) {
+          dataObject[key].forEach((item) => deleteInData(item));
+        } else if (typeof dataObject[key] === "object") {
+          deleteInData(dataObject[key]);
+        }
+      }
+    };
+
+    deleteInFields(tempFields);
+    deleteInData(tempData);
+    addFields(tempFields);
+    setData(tempData);
   }
 
   function transformString(input) {
@@ -145,8 +227,8 @@ export default function Create({
       .replace(/\s+/g, "-");
   }
 
-  console.log(data);
   console.log(allfields);
+  console.log(data);
 
   return (
     <>
@@ -184,92 +266,36 @@ export default function Create({
           </div>
           <div className="custom-border h-auto bg-white p-7">
             {allfields.map((field, index) => {
-              return (
-                (field.type == "Text" && (
-                  <div key={`${field.name}`} className="mb-2">
-                    <div className="mb-2 flex">
-                      {renameInputIndex == index && (
-                        <input
-                          className="border"
-                          defaultValue={field.name}
-                          onFocus={(e) => setOldField(e.target.value)}
-                          onBlur={(e) => renameField(index, e.target.value)}
-                        />
-                      )}
-                      {renameInputIndex !== index && <p>{field.name}</p>}
-                      <div className="ml-auto flex gap-3">
-                        <p
-                          className="cursor-pointer"
-                          onClick={() => setRenameInputIndex(index)}>
-                          Rename
-                        </p>
-                        <p
-                          className="cursor-pointer"
-                          onClick={() => deleteField(index, field.name)}>
-                          delete
-                        </p>
-                      </div>
-                    </div>
-                    <div className="w-full h-[50px]">
-                      <input
-                        className="bg-[#F8F8F8] flex-1 p-4 rounded outline-none placeholder:text-black placeholder:text-[15px] mr-2 h-[48px] w-full "
-                        type="text"
-                        value={
-                          data &&
-                          data != undefined &&
-                          data.length != 0 &&
-                          data[field.name] != undefined
-                            ? `${data[field.name]}`
-                            : ""
-                        }
-                        data-option="Text"
-                        onChange={prepareData}
-                        name={field.name}
-                        placeholder="Text Field"
-                      />
-                    </div>
-                  </div>
-                )) ||
-                (field.type == "ckEditor" && (
-                  <div className="mb-2" key={`${field.name}`}>
-                    <div className="mb-2 flex">
-                      {renameInputIndex == index && (
-                        <input
-                          className="border"
-                          defaultValue={field.name}
-                          onFocus={(e) => setOldField(e.target.value)}
-                          onBlur={(e) => renameField(index, e.target.value)}
-                        />
-                      )}
-                      {renameInputIndex !== index && <p>{field.name}</p>}
-                      <div className="ml-auto flex gap-3">
-                        <p
-                          className="cursor-pointer"
-                          onClick={() => setRenameInputIndex(index)}>
-                          Rename
-                        </p>
-                        <p
-                          className="cursor-pointer"
-                          onClick={() => deleteField(index, field.name)}>
-                          delete
-                        </p>
-                      </div>
-                    </div>
-                    <CustomEditor
-                      initialdata={
-                        data &&
-                        data != undefined &&
-                        data.length != 0 &&
-                        data[field.name] != undefined
-                          ? `${data[field.name]}`
-                          : ""
-                      }
-                      name={field.name}
-                      prepareData={prepareData}
+              const commonProps = {
+                data: data,
+                field: field,
+                index: index,
+                renameInputIndex: renameInputIndex,
+                setOldField: setOldField,
+                renameField: renameField,
+                setRenameInputIndex: setRenameInputIndex,
+                deleteField: deleteField,
+                prepareData: prepareData,
+              };
+              switch (field.type) {
+                case "Text":
+                  return <TextComponent key={field.name} {...commonProps} />;
+                case "ckEditor":
+                  return (
+                    <CKEditorComponent key={field.name} {...commonProps} />
+                  );
+                case "Group":
+                  return (
+                    <GroupComponent
+                      key={field.name}
+                      {...commonProps}
+                      toggleGroupPopup={toggleGroupPopup}
+                      setGroupParentValue={setGroupParentValue}
                     />
-                  </div>
-                ))
-              );
+                  );
+                default:
+                  return null;
+              }
             })}
           </div>
         </div>
@@ -318,6 +344,271 @@ export default function Create({
           allfields={allfields}
         />
       )}
+      {groupPopup && (
+        <GroupFields
+          togglePopup={toggleGroupPopup}
+          popup={groupPopup}
+          addFields={addFields}
+          allfields={allfields}
+          groupParentValue={groupParentValue}
+        />
+      )}
     </>
+  );
+}
+
+function TextComponent({
+  data,
+  field,
+  index,
+  renameInputIndex,
+  setOldField,
+  renameField,
+  setRenameInputIndex,
+  deleteField,
+  prepareData,
+  parent = "",
+}) {
+  function fetchValue(parent, child) {
+    const parentData = data[parent] || "";
+    if (parentData == "") return "";
+
+    const childValue = parentData.map((item) => {
+      return item[child];
+    });
+    return childValue;
+  }
+
+  return (
+    <div key={`${field.name}`} className="mb-2">
+      <div className="mb-2 flex">
+        {renameInputIndex == field.name && (
+          <input
+            className="border"
+            defaultValue={field.name}
+            onFocus={(e) => setOldField(e.target.value)}
+            onBlur={(e) => renameField(index, e.target.value)}
+          />
+        )}
+        {renameInputIndex !== field.name && <p>{field.name}</p>}
+        <div className="ml-auto flex gap-3">
+          <p
+            className="cursor-pointer"
+            onClick={() => setRenameInputIndex(field.name)}>
+            Rename
+          </p>
+          <p
+            className="cursor-pointer"
+            onClick={() => deleteField(index, field.name)}>
+            delete
+          </p>
+        </div>
+      </div>
+      <div className="w-full h-[50px]">
+        <input
+          className="bg-[#F8F8F8] flex-1 p-4 rounded outline-none placeholder:text-black placeholder:text-[15px] mr-2 h-[48px] w-full "
+          type="text"
+          value={
+            parent !== ""
+              ? fetchValue(parent, field.name)
+              : data &&
+                data != undefined &&
+                data.length != 0 &&
+                data[field.name] != undefined
+              ? `${data[field.name]}`
+              : ""
+          }
+          data-option="Text"
+          onChange={(e) => prepareData(e, parent)}
+          name={field.name}
+          placeholder="Text Field"
+        />
+      </div>
+    </div>
+  );
+}
+
+function CKEditorComponent({
+  data,
+  field,
+  index,
+  renameInputIndex,
+  setOldField,
+  renameField,
+  setRenameInputIndex,
+  deleteField,
+  prepareData,
+  parent = "",
+}) {
+  function fetchValue(parent, child) {
+    const parentData = data[parent] || "";
+    if (parentData == "") return "";
+
+    const childValue = parentData.map((item) => {
+      return item[child];
+    });
+    return `${childValue}`;
+  }
+
+  return (
+    <div className="mb-2" key={`${field.name}`}>
+      <div className="mb-2 flex">
+        {renameInputIndex == field.name && (
+          <input
+            className="border"
+            defaultValue={field.name}
+            onFocus={(e) => setOldField(e.target.value)}
+            onBlur={(e) => renameField(index, e.target.value)}
+          />
+        )}
+        {renameInputIndex !== field.name && <p>{field.name}</p>}
+        <div className="ml-auto flex gap-3">
+          <p
+            className="cursor-pointer"
+            onClick={() => setRenameInputIndex(field.name)}>
+            Rename
+          </p>
+          <p
+            className="cursor-pointer"
+            onClick={() => deleteField(index, field.name)}>
+            delete
+          </p>
+        </div>
+      </div>
+      <CustomEditor
+        initialdata={
+          parent !== ""
+            ? fetchValue(parent, field.name)
+            : data &&
+              data != undefined &&
+              data.length != 0 &&
+              data[field.name] != undefined
+            ? `${data[field.name]}`
+            : ""
+        }
+        name={field.name}
+        prepareData={prepareData}
+        parent={parent}
+      />
+    </div>
+  );
+}
+
+function GroupComponent({
+  data,
+  field,
+  index,
+  renameInputIndex,
+  setOldField,
+  renameField,
+  setRenameInputIndex,
+  deleteField,
+  prepareData,
+  toggleGroupPopup,
+  setGroupParentValue,
+  parent = "",
+}) {
+  const renderField = (field, index, parent) => {
+    switch (field.type) {
+      case "Text":
+        return (
+          <TextComponent
+            key={field.name}
+            data={data}
+            field={field}
+            index={index}
+            renameInputIndex={renameInputIndex}
+            setOldField={setOldField}
+            renameField={renameField}
+            setRenameInputIndex={setRenameInputIndex}
+            deleteField={deleteField}
+            prepareData={prepareData}
+            parent={parent}
+          />
+        );
+      case "ckEditor":
+        return (
+          <CKEditorComponent
+            key={field.name}
+            data={data}
+            field={field}
+            index={index}
+            renameInputIndex={renameInputIndex}
+            setOldField={setOldField}
+            renameField={renameField}
+            setRenameInputIndex={setRenameInputIndex}
+            deleteField={deleteField}
+            prepareData={prepareData}
+            parent={parent}
+          />
+        );
+      case "Group":
+        return (
+          <GroupComponent
+            key={field.name}
+            data={data}
+            field={field}
+            index={index}
+            renameInputIndex={renameInputIndex}
+            setOldField={setOldField}
+            renameField={renameField}
+            setRenameInputIndex={setRenameInputIndex}
+            deleteField={deleteField}
+            prepareData={prepareData}
+            toggleGroupPopup={toggleGroupPopup}
+            setGroupParentValue={setGroupParentValue}
+            parent={parent}
+          />
+        );
+      default:
+        return null;
+    }
+  };
+  return (
+    <div key={`${field.name}`} className="mb-2">
+      <div className="mb-2 flex">
+        {renameInputIndex == field.name && (
+          <input
+            className="border"
+            defaultValue={field.name}
+            onFocus={(e) => setOldField(e.target.value)}
+            onBlur={(e) => renameField(index, e.target.value)}
+          />
+        )}
+        {renameInputIndex !== field.name && <p>{field.name}</p>}
+        <div className="ml-auto flex gap-3">
+          <p
+            className="cursor-pointer"
+            onClick={() => setRenameInputIndex(field.name)}>
+            Rename
+          </p>
+          <p
+            className="cursor-pointer"
+            onClick={() => deleteField(index, field.name)}>
+            delete
+          </p>
+        </div>
+      </div>
+      <div className="flex">
+        <div className="w-[50px] h-[50px] flex justify-center items-center">
+          <Image width={20} height={20} alt="" src={curvedArrow} />
+        </div>
+        <div className="w-full">
+          <div>
+            {field.children &&
+              field.children.map((child, childIndex) =>
+                renderField(child, childIndex, field.name)
+              )}
+          </div>
+          <Button
+            name="Add Field"
+            onClick={() => {
+              toggleGroupPopup(true);
+              setGroupParentValue(field.name);
+            }}
+          />
+        </div>
+      </div>
+    </div>
   );
 }

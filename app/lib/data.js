@@ -104,7 +104,8 @@ export async function retrieveAll(
   if (status !== null && status !== undefined && status !== "") {
     query1 += ` AND status = ?`;
     query2 += ` AND status = ?`;
-    params.push(status);
+    const refinedStatus = status == "Draft" ? "Draft" : "Published";
+    params.push(refinedStatus);
   }
 
   query1 += ` LIMIT ?`;
@@ -277,7 +278,7 @@ const storePageDataSchema = z.object({
   data: z.string(),
   allfields: z.string().optional(),
   name: z.string(),
-  parentvalue: z.string(),
+  parentvalue: z.union([z.string(), z.literal("")]),
   statusvalue: z.string(),
   featuredImage: z.string().url(),
   id: z.union([z.string(), z.number()]).optional(),
@@ -358,7 +359,7 @@ export async function storePageData(
   data,
   allfields,
   name,
-  parentvalue,
+  parentvalue = "",
   statusvalue,
   featuredImage,
   id,
@@ -384,7 +385,7 @@ export async function storePageData(
     return null;
   }
   if (id !== "") {
-    updateData(
+    updatePageData(
       name,
       data,
       allfields,
@@ -459,7 +460,7 @@ export async function updatePageData(
   name,
   data,
   allfields,
-  parentValue,
+  parentvalue,
   statusvalue,
   featuredImage,
   id,
@@ -472,7 +473,7 @@ export async function updatePageData(
       name,
       data,
       allfields,
-      parentValue,
+      parentvalue,
       statusvalue,
       featuredImage,
       slug,
