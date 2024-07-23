@@ -227,9 +227,6 @@ export default function Create({
       .replace(/\s+/g, "-");
   }
 
-  console.log(allfields);
-  console.log(data);
-
   return (
     <>
       <div className="flex">

@@ -41,7 +41,6 @@ export default function GroupFields({
         children: [],
       };
       const newData = addChild(allfields, groupParentValue, data);
-      console.log(newData);
       togglePopup(!popup);
     } else {
       setError(true);

@@ -12,10 +12,7 @@ export default async function CreateNew() {
     <div className="flex flex-col h-full">
       <NavBar page="Create New Case Study" />
       <main className="pl-10 pr-10 pt-5">
-        <Create
-          category_list={JSON.stringify(category_list)}
-          unique_name="case_studies"
-        />
+        <Create category_list={category_list} unique_name="case_studies" />
       </main>
       <Footer />
     </div>

@@ -14,7 +14,7 @@ export default async function Edit({ params }) {
         <Create
           category_list={JSON.stringify(category_list)}
           id={params.id}
-          totaldata={JSON.stringify(data)}
+          totaldata={data}
           unique_name="pages"
         />
       </main>

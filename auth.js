@@ -20,9 +20,9 @@ export const { auth, signIn, signOut } = NextAuth({
     async jwt({ token }) {
       const userID = token.sub;
       const userRole = await retrieveUserRoles(userID);
-      token.role = JSON.parse(userRole).role;
-      token.first_name = JSON.parse(userRole).first_name;
-      token.last_name = JSON.parse(userRole).last_name;
+      token.role = JSON.parse(userRole)[0].role;
+      token.first_name = JSON.parse(userRole)[0].first_name;
+      token.last_name = JSON.parse(userRole)[0].last_name;
       return token;
     },
   },
@@ -38,6 +38,7 @@ export const { auth, signIn, signOut } = NextAuth({
           const user = await getUser(email);
           if (!user) return null;
           const hashedPassword = await bcrypt.compare(password, user.password);
+          console.log(user);
           if (hashedPassword) {
             return user;
           } else {

@@ -12,9 +12,9 @@ export default async function Edit({ params }) {
       <NavBar page="List Of Articles" />
       <main className="pl-10 pr-10 pt-5">
         <Create
-          category_list={JSON.stringify(category_list)}
+          category_list={category_list}
           id={params.id}
-          totaldata={JSON.stringify(data)}
+          totaldata={data}
           unique_name="articles"
         />
       </main>

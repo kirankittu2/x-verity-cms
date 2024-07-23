@@ -54,7 +54,7 @@ export default function FileShowCase({ files, totalPages }) {
         <div className="p-4 flex flex-wrap">
           {files &&
             files.length !== 0 &&
-            files.map((file, index) => (
+            JSON.parse(files).map((file, index) => (
               <div
                 key={index}
                 className="w-[150px] h-[150px] m-2 relative group cursor-pointer">

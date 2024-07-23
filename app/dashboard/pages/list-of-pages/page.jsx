@@ -1,8 +1,4 @@
-import {
-  fetchPageNumber,
-  retrieveAll,
-  retrieveCategories,
-} from "@/app/lib/data";
+import { retrieveAll, retrieveParents } from "@/app/lib/data";
 import Table from "@/app/ui/articles/table";
 import CreateNew from "@/app/ui/create-new";
 import Filter from "@/app/ui/filter";
@@ -26,8 +22,7 @@ export default async function ListOfPages({ searchParams }) {
       currentPage - 1
     )
   );
-  const categories = await retrieveCategories(table_name);
-  console.log(categories);
+  const categories = await retrieveParents();
 
   return (
     <div className="flex flex-col h-full">

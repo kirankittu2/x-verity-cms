@@ -1,7 +1,6 @@
 import Image from "next/image";
 import menudots from "@/public/menu-dots.svg";
 import { fetchAllActivities } from "@/app/lib/data";
-import { dateConversion } from "@/app/lib/utils";
 import DateTable from "../date";
 
 export default async function Table() {

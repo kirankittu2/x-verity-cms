@@ -49,7 +49,7 @@ export default function Table({ totaldata, totalPages, unique_name }) {
     ).textContent;
 
     if (operation != "Select Option") {
-      await operations(id, operation, unique_name);
+      await operations([id], operation, unique_name);
     }
   }
 
@@ -75,7 +75,7 @@ export default function Table({ totaldata, totalPages, unique_name }) {
             </tr>
           </thead>
           <tbody className="text-15-black activity-table-body text-center">
-            {totaldata.map((activity) => {
+            {JSON.parse(totaldata).map((activity) => {
               return (
                 <tr data-option={activity.id} key={activity.id}>
                   <td className="px-5 p-2 flex justify-center mt-3">

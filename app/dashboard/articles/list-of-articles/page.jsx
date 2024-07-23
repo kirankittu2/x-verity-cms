@@ -17,13 +17,10 @@ export default async function ListOfArticles({ searchParams }) {
   const Status = searchParams?.status || "";
   const currentPage = searchParams?.page || 1;
 
-  const data = JSON.parse(await retrieveAll(
-    table_name,
-    Title,
-    Type,
-    Status,
-    currentPage - 1
-  ));
+  const data = JSON.parse(
+    await retrieveAll(table_name, Title, Type, Status, currentPage - 1)
+  );
+  console.log(data);
   const categories = await retrieveCategories(table_name);
 
   return (

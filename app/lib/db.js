@@ -1,25 +1,13 @@
-import mysql from "mysql";
+import mysql2 from "mysql2/promise";
 
-var connection = mysql.createConnection({
+var pool = mysql2.createPool({
   host: "72.167.133.180",
   user: "qcadmin",
   password: `Dj"Hi4PaJt9Kt_^`,
   database: "qcadmin_xv_cms",
-  multipleStatements: true,
+  waitForConnections: true,
+  connectionLimit: 0,
+  queueLimit: 0,
 });
 
-connection.connect((err) => {
-  if (err) {
-    console.error({
-      code: err.code,
-      errno: err.errno,
-      sqlMessage: err.sqlMessage,
-      sqlState: err.sqlState,
-      fatal: err.fatal,
-    });
-    return;
-  }
-  console.log("Connected to the database");
-});
-
-export default connection;
+export default pool;

@@ -12,9 +12,9 @@ import UpdateUi from "../ui/update-ui";
 
 export default async function Dashboard() {
   // const version = await versionCheck();
-  const articleCount = JSON.parse(await fetchArticleCount());
-  const pageCount = JSON.parse(await fetchPagesCount());
-  const caseStudiesCount = JSON.parse(await fetchCaseStudiesCount());
+  const articleCount = JSON.parse(await fetchArticleCount())[0];
+  const pageCount = JSON.parse(await fetchPagesCount())[0];
+  const caseStudiesCount = JSON.parse(await fetchCaseStudiesCount())[0];
 
   return (
     <div className="flex flex-col h-full">

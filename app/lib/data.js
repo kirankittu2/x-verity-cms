@@ -1,6 +1,6 @@
 "use server";
 
-import connection from "@/app/lib/db";
+import pool from "@/app/lib/db";
 import { revalidatePath, unstable_noStore } from "next/cache";
 import { redirect } from "next/navigation";
 import { auth } from "@/auth";
@@ -13,14 +13,16 @@ const ITEMS_PER_PAGES = 10;
 export async function retrieveImages(name, type, currentPage) {
   const offset = currentPage * IMAGES_PER_PAGE;
 
-  let query1 = `SELECT * FROM ?? WHERE 1=1`;
-  let query2 = `SELECT * FROM ?? WHERE 1=1`;
-  const params = ["media"];
+  let query1 = `SELECT * FROM media WHERE 1=1`;
+  let query2 = `SELECT * FROM media WHERE 1=1`;
+  const params1 = [];
+  const params2 = [];
 
   if (name !== null && name !== undefined) {
     query1 += ` AND name LIKE ?`;
     query2 += ` AND name LIKE ?`;
-    params.push(`%${name}%`);
+    params1.push(`%${name}%`);
+    params2.push(`%${name}%`);
   }
 
   if (
@@ -31,25 +33,29 @@ export async function retrieveImages(name, type, currentPage) {
   ) {
     query1 += ` AND type = ?`;
     query2 += ` AND type = ?`;
-    params.push(type);
+    params1.push(type);
+    params2.push(type);
   }
 
   query1 += ` LIMIT ?`;
-  params.push(ITEMS_PER_PAGES);
+  params1.push(IMAGES_PER_PAGE.toString());
 
   if (offset !== null && offset !== undefined) {
     query1 += ` OFFSET ?`;
-    params.push(offset);
+    params1.push(offset.toString());
   }
 
   try {
-    const results1 = await queryAsync(query1, params);
-    const results2 = await queryAsync(query1, params);
-    const totalPages = Math.ceil(Number(results2.length) / ITEMS_PER_PAGES);
+    const results1 = await queryAsync(query1, params1);
+    const results2 = await queryAsync(query2, params2);
+    const parsedResults = JSON.parse(results2);
+    const totalPages = Math.ceil(
+      Number(parsedResults.length) / IMAGES_PER_PAGE
+    );
 
-    return JSON.stringify([results1, totalPages]);
+    return [results1, totalPages];
   } catch (error) {
-    console.error("Error fetching user:", error);
+    console.error("Error retriving images:", error);
     return null;
   }
 }
@@ -66,7 +72,7 @@ export async function fetchFilePages(name, type, times) {
     const totalPages = Math.ceil(Number(results.length) / IMAGES_PER_PAGE);
     return totalPages;
   } catch (error) {
-    console.error("Error fetching user:", error);
+    console.error("Error fetching pages:", error);
     return null;
   }
 }
@@ -80,14 +86,16 @@ export async function retrieveAll(
 ) {
   const offset = currentPage * ITEMS_PER_PAGES;
 
-  let query1 = `SELECT * FROM ?? WHERE 1=1`;
-  let query2 = `SELECT * FROM ?? WHERE 1=1`;
-  const params = [unique_name];
+  let query1 = `SELECT * FROM ${unique_name} WHERE 1=1`;
+  let query2 = `SELECT * FROM ${unique_name} WHERE 1=1`;
+  const params1 = [];
+  const params2 = [];
 
   if (name !== null && name !== undefined) {
     query1 += ` AND name LIKE ?`;
     query2 += ` AND name LIKE ?`;
-    params.push(`%${name}%`);
+    params1.push(`%${name}%`);
+    params2.push(`%${name}%`);
   }
 
   if (
@@ -98,32 +106,37 @@ export async function retrieveAll(
   ) {
     query1 += ` AND type = ?`;
     query2 += ` AND type = ?`;
-    params.push(type);
+    params1.push(type);
+    params2.push(type);
   }
 
   if (status !== null && status !== undefined && status !== "") {
     query1 += ` AND status = ?`;
     query2 += ` AND status = ?`;
     const refinedStatus = status == "Draft" ? "Draft" : "Published";
-    params.push(refinedStatus);
+    params1.push(refinedStatus);
+    params2.push(refinedStatus);
   }
 
   query1 += ` LIMIT ?`;
-  params.push(ITEMS_PER_PAGES);
+  params1.push(ITEMS_PER_PAGES.toString());
 
   if (offset !== null && offset !== undefined) {
     query1 += ` OFFSET ?`;
-    params.push(offset);
+    params1.push(offset.toString());
   }
 
   try {
-    const results1 = await queryAsync(query1, params);
-    const results2 = await queryAsync(query2, params);
-    const totalPages = Math.ceil(Number(results2.length) / ITEMS_PER_PAGES);
+    const results1 = await queryAsync(query1, params1);
+    const results2 = await queryAsync(query2, params2);
+    const parsedResults = JSON.parse(results2);
+    const totalPages = Math.ceil(
+      Number(parsedResults.length) / ITEMS_PER_PAGES
+    );
 
     return JSON.stringify([results1, totalPages]);
   } catch (error) {
-    console.error("Error fetching user:", error);
+    console.error("Error retriving all:", error);
     return null;
   }
 }
@@ -141,7 +154,7 @@ export async function fetchPageNumber(unique_name, name, type, times) {
     const totalPages = Math.ceil(Number(results.length) / ITEMS_PER_PAGES);
     return totalPages;
   } catch (error) {
-    console.error("Error fetching user:", error);
+    console.error("Error fetching page number:", error);
     return null;
   }
 }
@@ -171,10 +184,9 @@ function handleFetchNumberofPages(db_name, name, type, times) {
 export async function retrieveImageTypes() {
   const query = "SELECT DISTINCT type FROM media";
   try {
-    const results = await queryAsync(query);
-    return JSON.stringify(results);
+    return await queryAsync(query);
   } catch (error) {
-    console.error("Error fetching user:", error);
+    console.error("Error fetching total number of pages:", error);
     return null;
   }
 }
@@ -185,7 +197,7 @@ export async function uploadImage(uniquename, name, type) {
   try {
     await queryAsync(query, [uniquename, name, type]);
   } catch (error) {
-    console.error("Error fetching user:", error);
+    console.error("Error uploading images:", error);
     return null;
   }
 
@@ -197,7 +209,7 @@ export async function deleteImages(data) {
   try {
     await queryAsync(query, [data]);
   } catch (error) {
-    console.error("Error fetching user:", error);
+    console.error("Error deleting images:", error);
     return null;
   }
 
@@ -207,9 +219,9 @@ export async function deleteImages(data) {
 export async function deleteCategoryData(data, unique_name) {
   const query = `DELETE FROM ${unique_name} WHERE id IN (?)`;
   try {
-    await queryAsync(query, [data]);
+    await queryAsync(query, data);
   } catch (error) {
-    console.error("Error fetching user:", error);
+    console.error("Error deleting category data:", error);
     return null;
   }
 
@@ -217,23 +229,28 @@ export async function deleteCategoryData(data, unique_name) {
 }
 
 export async function deletePages(data, unique_name) {
-  const query = `DELETE FROM ${unique_name} WHERE id IN (?)`;
+  const filteredArray = data.filter((value) => value !== null);
+  const placeholders = filteredArray.map(() => "?").join(",");
+  const query = `DELETE FROM ${unique_name} WHERE id IN (${placeholders})`;
   try {
-    await queryAsync(query, [data]);
+    await queryAsync(query, filteredArray);
   } catch (error) {
-    console.error("Error fetching user:", error);
+    console.error("Error deleting pages:", error);
     return null;
   }
-  console.log(`/${unique_name}/list-of-${unique_name}`);
   revalidatePath(`/${unique_name}/list-of-${unique_name}`);
 }
 
 export async function mutateStatus(data, value, unique_name) {
-  const query = `UPDATE ${unique_name} SET status = ? WHERE id IN (?)`;
+  console.log("data");
+  console.log(data);
+  const filteredArray = data.filter((value) => value !== null);
+  const placeholders = filteredArray.map(() => "?").join(",");
+  const query = `UPDATE ${unique_name} SET status = ? WHERE id IN (${placeholders})`;
   try {
-    await queryAsync(query, [value, data]);
+    await queryAsync(query, [value, filteredArray]);
   } catch (error) {
-    console.error("Error fetching user:", error);
+    console.error("Error mutating status:", error);
     return null;
   }
 
@@ -244,9 +261,10 @@ export async function getUser(email) {
   const query = "SELECT * FROM users WHERE email = ?";
   try {
     const results = await queryAsync(query, [email]);
-    return results[0];
+    const parsedResults = JSON.parse(results);
+    return parsedResults[0];
   } catch (error) {
-    console.error("Error fetching user:", error);
+    console.error("Error getting user:", error);
     return null;
   }
 }
@@ -257,7 +275,7 @@ export async function getOTPUser(email) {
     const results = await queryAsync(query, [email]);
     return results[0];
   } catch (error) {
-    console.error("Error fetching user:", error);
+    console.error("Error getting otp to user:", error);
     return null;
   }
 }
@@ -345,12 +363,14 @@ export async function storeData(
       slug,
     ]);
   } catch (error) {
-    console.error("Error fetching user:", error);
+    console.error("Error storing data:", error);
     return null;
   }
+  const parsedResults = JSON.parse(results);
+
   revalidatePath(`/${unique_name}/list-of-articles`);
   redirect(
-    `/dashboard/${unique_name}/${results.insertId}/edit?id=${results.insertId}`,
+    `/dashboard/${unique_name}/${parsedResults.insertId}/edit?id=${parsedResults.insertId}`,
     "push"
   );
 }
@@ -414,13 +434,13 @@ export async function storePageData(
       slug,
     ]);
   } catch (error) {
-    console.error("Error fetching user:", error);
+    console.error("Error storing page data:", error);
     return null;
   }
-
+  const parsedResults = JSON.parse(results);
   revalidatePath(`/${unique_name}/list-of-articles`);
   redirect(
-    `/dashboard/${unique_name}/${results.insertId}/edit?id=${results.insertId}`,
+    `/dashboard/${unique_name}/${parsedResults.insertId}/edit?id=${parsedResults.insertId}`,
     "push"
   );
 }
@@ -449,7 +469,7 @@ export async function updateData(
       id,
     ]);
   } catch (error) {
-    console.error("Error fetching user:", error);
+    console.error("Error updating data:", error);
     return null;
   }
 
@@ -480,7 +500,7 @@ export async function updatePageData(
       id,
     ]);
   } catch (error) {
-    console.error("Error fetching user:", error);
+    console.error("Error updating page data:", error);
     return null;
   }
 
@@ -493,7 +513,7 @@ export async function getArticles() {
     const results = await queryAsync(query);
     return results;
   } catch (error) {
-    console.error("Error fetching user:", error);
+    console.error("Error getting articles:", error);
     return null;
   }
 }
@@ -501,10 +521,9 @@ export async function getArticles() {
 export async function getPageById(id, unique_name) {
   const query = `SELECT * FROM ${unique_name} WHERE id = ?`;
   try {
-    const results = await queryAsync(query, [id]);
-    return results;
+    return await queryAsync(query, [id]);
   } catch (error) {
-    console.error("Error fetching user:", error);
+    console.error("Error getting page by id:", error);
     return null;
   }
 }
@@ -515,12 +534,18 @@ export async function getAllCategories(unique_name, currentPage) {
   const query2 = `SELECT id, name FROM ${unique_name}`;
 
   try {
-    const results1 = await queryAsync(query1, [ITEMS_PER_PAGES, offset]);
+    const results1 = await queryAsync(query1, [
+      ITEMS_PER_PAGES.toString(),
+      offset.toString(),
+    ]);
     const results2 = await queryAsync(query2);
-    const totalPages = Math.ceil(Number(results2.length) / ITEMS_PER_PAGES);
+    const parsedResults = JSON.parse(results2);
+    const totalPages = Math.ceil(
+      Number(parsedResults.length) / ITEMS_PER_PAGES
+    );
     return JSON.stringify([results1, totalPages]);
   } catch (error) {
-    console.error("Error fetching user:", error);
+    console.error("Error getting all categories:", error);
     return null;
   }
 }
@@ -529,11 +554,9 @@ export async function getAllCategoriesWithoutOffset(unique_name) {
   const query = `SELECT id, name FROM ${unique_name}`;
 
   try {
-    const results = await queryAsync(query);
-    console.log(results);
-    return JSON.stringify(results);
+    return await queryAsync(query);
   } catch (error) {
-    console.error("Error fetching user:", error);
+    console.error("Error getting all categories without offset:", error);
     return null;
   }
 }
@@ -541,10 +564,19 @@ export async function getAllCategoriesWithoutOffset(unique_name) {
 export async function retrieveCategories(unique_name) {
   const query = `SELECT DISTINCT type FROM ${unique_name}`;
   try {
-    const results = await queryAsync(query);
-    return JSON.stringify(results);
+    return await queryAsync(query);
   } catch (error) {
-    console.error("Error fetching user:", error);
+    console.error("Error retriving categories:", error);
+    return null;
+  }
+}
+
+export async function retrieveParents() {
+  const query = `SELECT DISTINCT parent FROM pages`;
+  try {
+    return await queryAsync(query);
+  } catch (error) {
+    console.error("Error retriving categories:", error);
     return null;
   }
 }
@@ -552,10 +584,9 @@ export async function retrieveCategories(unique_name) {
 export async function retrieveUserRoles(userID) {
   const query = "SELECT role, first_name, last_name FROM users WHERE id = ?";
   try {
-    const results = await queryAsync(query, [userID]);
-    return JSON.stringify(results[0]);
+    return await queryAsync(query, [userID]);
   } catch (error) {
-    console.error("Error fetching user:", error);
+    console.error("Error fetching user role:", error);
     return null;
   }
 }
@@ -566,7 +597,7 @@ export async function fetchCurrentVersion() {
     const results = await queryAsync(query);
     return JSON.stringify(results[0]);
   } catch (error) {
-    console.error("Error fetching user:", error);
+    console.error("Error fetching current version:", error);
     return null;
   }
 }
@@ -576,7 +607,7 @@ export async function updateVersion(prev, current) {
   try {
     await queryAsync(query);
   } catch (error) {
-    console.error("Error fetching user:", error);
+    console.error("Error updating version:", error);
     return null;
   }
 }
@@ -586,7 +617,7 @@ export async function isUpdated(num) {
   try {
     await queryAsync(query);
   } catch (error) {
-    console.error("Error fetching user:", error);
+    console.error("Error at isUpdated method:", error);
     return null;
   }
 }
@@ -597,7 +628,7 @@ export async function fetchIsUpdated() {
     const results = await queryAsync(query);
     return JSON.stringify(results[0]);
   } catch (error) {
-    console.error("Error fetching user:", error);
+    console.error("Error at fetchIsUpdated method:", error);
     return null;
   }
 }
@@ -605,10 +636,9 @@ export async function fetchIsUpdated() {
 export async function retrieveSingleImageDetails(id) {
   const query = "SELECT * FROM media WHERE id = ?";
   try {
-    const results = await queryAsync(query, [id]);
-    return JSON.stringify(results[0]);
+    return await queryAsync(query, [id]);
   } catch (error) {
-    console.error("Error fetching user:", error);
+    console.error("Error fetching single image details:", error);
     return null;
   }
 }
@@ -623,13 +653,14 @@ export default async function storeActivity(title, type) {
     refinedType = "Case Study";
   }
   const res = await auth();
+  console.log(res);
   const author = res.user.first_name;
 
   const query = `INSERT INTO activities (title, type, author) VALUES (?, ?, ?)`;
   try {
     await queryAsync(query, [title, refinedType, author]);
   } catch (error) {
-    console.error("Error fetching user:", error);
+    console.error("Error storing activity:", error);
     return null;
   }
 
@@ -639,10 +670,9 @@ export default async function storeActivity(title, type) {
 export async function fetchAllActivities() {
   const query = "SELECT * FROM activities ORDER BY created_on DESC LIMIT 5;";
   try {
-    const results = await queryAsync(query);
-    return JSON.stringify(results);
+    return await queryAsync(query);
   } catch (error) {
-    console.error("Error fetching user:", error);
+    console.error("Error fetching all activities:", error);
     return null;
   }
 }
@@ -652,10 +682,9 @@ export async function fetchArticleCount() {
 
   const query = "SELECT COUNT(*) as count FROM articles";
   try {
-    const results = await queryAsync(query);
-    return JSON.stringify(results[0]);
+    return await queryAsync(query);
   } catch (error) {
-    console.error("Error fetching user:", error);
+    console.error("Error fetching article count:", error);
     return null;
   }
 }
@@ -665,10 +694,9 @@ export async function fetchPagesCount() {
 
   const query = "SELECT COUNT(*) as count FROM pages";
   try {
-    const results = await queryAsync(query);
-    return JSON.stringify(results[0]);
+    return await queryAsync(query);
   } catch (error) {
-    console.error("Error fetching user:", error);
+    console.error("Error fetching pages count:", error);
     return null;
   }
 }
@@ -677,10 +705,9 @@ export async function fetchCaseStudiesCount() {
   unstable_noStore();
   const query = "SELECT COUNT(*) as count FROM case_studies";
   try {
-    const results = await queryAsync(query);
-    return JSON.stringify(results[0]);
+    return await queryAsync(query);
   } catch (error) {
-    console.error("Error fetching user:", error);
+    console.error("Error fetching case study count:", error);
     return null;
   }
 }
@@ -691,7 +718,7 @@ export async function updatePassword(password, userID) {
     await queryAsync(query);
     return { success: true };
   } catch (error) {
-    console.error("Error fetching user:", error);
+    console.error("Error updating password:", error);
     return null;
   }
 }
@@ -713,7 +740,7 @@ export async function storeOTP(otp, email) {
       await queryAsync(query);
       return { success: true };
     } catch (error) {
-      console.error("Error fetching user:", error);
+      console.error("Error storing otp:", error);
       return { success: false };
     }
   }
@@ -725,7 +752,7 @@ export async function getOTP(email) {
     const results = await queryAsync(query, [email]);
     return JSON.stringify(results);
   } catch (error) {
-    console.error("Error fetching user:", error);
+    console.error("Error getting otp:", error);
     return null;
   }
 }
@@ -758,7 +785,7 @@ export async function fetchAllUsers() {
     const query = "SELECT * FROM users";
     const results = await queryAsync(query, []);
 
-    return JSON.stringify(results);
+    return results;
   } catch (e) {
     console.log(e);
   }
@@ -771,9 +798,10 @@ async function createColumnsIfNeeded(fields) {
       FROM INFORMATION_SCHEMA.COLUMNS
       WHERE TABLE_SCHEMA = ? AND TABLE_NAME = 'form_data'
     `;
-    const existingColumns = await queryAsync(columnsQuery, [
-      connection.config.database,
-    ]);
+
+    const existingColumns = JSON.parse(
+      await queryAsync(columnsQuery, ["qcadmin_xv_cms"])
+    );
 
     const alterTableQueries = [];
 
@@ -805,7 +833,7 @@ export async function storeFormData(formName, fields) {
     await queryAsync(query, values);
     await createColumnsIfNeeded(fields);
   } catch (e) {
-    console.log(e);
+    console.error("Error storing form data:", e);
     return { success: false };
   }
 
@@ -816,11 +844,9 @@ export async function storeFormData(formName, fields) {
 export async function fetchAllForms() {
   try {
     const query = "SELECT id, form_name FROM forms";
-
-    const results = await queryAsync(query, []);
-    return JSON.stringify(results);
+    return await queryAsync(query, []);
   } catch (e) {
-    console.log(e);
+    console.error("Error fetching all forms:", e);
     return { success: false };
   }
 }
@@ -829,9 +855,9 @@ export async function fetchFormData(id) {
   try {
     const query = `SELECT * FROM forms t1 JOIN form_data t2 ON t1.id = t2.id WHERE t1.id = ?`;
     const results = await queryAsync(query, [id]);
-    return JSON.stringify(results);
+    return results;
   } catch (e) {
-    console.log(e);
+    console.error("Error fetching form data:", e);
     return { success: false };
   }
 }
@@ -840,9 +866,9 @@ export async function fetchTablesColumns(id) {
   try {
     const query = `SELECT * FROM forms WHERE id = ?`;
     const results = await queryAsync(query, [id]);
-    return JSON.stringify(results);
+    return results;
   } catch (e) {
-    console.log(e);
+    console.error("Error fetching table columns:", e);
     return { success: false };
   }
 }
@@ -851,23 +877,35 @@ export async function updateTablesColumns(formName, fields, id) {
   try {
     const query = `UPDATE forms SET form_name = ?, fields = ? WHERE id = ?;`;
     const values = [formName, JSON.stringify(fields), id];
-    await queryAsync(query, values);
 
+    await queryAsync(query, values);
+    await createColumnsIfNeeded(fields);
     return { success: true };
   } catch (e) {
-    console.log(e);
+    console.error("Error updating table columns:", e);
     return { success: false };
   }
 }
 
-export async function queryAsync(sqlQuery, values = "") {
-  return new Promise((resolve, reject) => {
-    connection.query(sqlQuery, values, (error, results) => {
-      if (error) {
-        reject(error);
-      } else {
-        resolve(results);
-      }
-    });
-  });
+export async function queryAsync(query, values = []) {
+  console.log(query);
+  console.log(values);
+  let connection;
+  try {
+    connection = await pool.getConnection();
+    const results = await connection.execute(query, values);
+    return JSON.stringify(results[0]);
+  } catch (error) {
+    console.error("Error executing query:", error);
+    if (
+      error.code === "PROTOCOL_CONNECTION_LOST" ||
+      error.code === "ECONNRESET" ||
+      error.code === "ETIMEDOUT"
+    ) {
+      return queryAsync(query, values);
+    }
+    throw error;
+  } finally {
+    if (connection) connection.release();
+  }
 }

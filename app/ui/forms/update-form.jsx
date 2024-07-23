@@ -8,7 +8,6 @@ import { updateTablesColumns } from "@/app/lib/data";
 export default function UpdateForm({ data, id }) {
   const parsedData = JSON.parse(data)[0];
   const parsedFields = JSON.parse(parsedData.fields);
-  console.log(parsedFields);
   const [fields, setFields] = useState(parsedFields);
   const [formName, setFormName] = useState(parsedData.form_name);
   const [error, setError] = useState({

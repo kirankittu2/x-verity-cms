@@ -69,7 +69,7 @@ export default function CategoryTable({ totaldata, totalPages, unique_name }) {
             </tr>
           </thead>
           <tbody className="text-15-black activity-table-body text-center">
-            {totaldata.map((activity) => {
+            {JSON.parse(totaldata).map((activity) => {
               return (
                 <tr key={activity.id}>
                   <td className="px-5 p-2 flex justify-center mt-3">

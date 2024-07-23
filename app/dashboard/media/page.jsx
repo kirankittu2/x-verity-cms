@@ -17,13 +17,10 @@ export default async function Media({ searchParams }) {
   const currentPage = searchParams?.page || 1;
   const currentItem = searchParams?.item || "";
 
-  const files = JSON.parse(await retrieveImages(
-    imageTitle,
-    imageType,
-    currentPage - 1
-  ));
+  const files = await retrieveImages(imageTitle, imageType, currentPage - 1);
   const types = await retrieveImageTypes();
   const imagedata = await retrieveSingleImageDetails(currentItem);
+
   return (
     <>
       <BrowseFiles />
