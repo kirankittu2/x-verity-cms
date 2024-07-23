@@ -28,20 +28,21 @@ export function generatePagination(currentPage, totalPages) {
 }
 
 export async function newVersionCheck() {
-  const response = await fetch("http://localhost:3004/version", {
+  const response = await fetch("http://localhost/cms/version", {
+    method: "GET",
     cache: "no-store",
   });
-
-  return await response.text();
+  const version = await response.text();
+  return version;
 }
 
 export async function versionCheck() {
   noStore();
   const version = await fetchCurrentVersion();
-  const currentVersion = JSON.parse(version).current_version;
+  const currentVersion = JSON.parse(version)[0].current_version;
   const data = await newVersionCheck();
 
-  if (data !== currentVersion) {
+  if ("v2.0.0" !== currentVersion) {
     return true;
   } else {
     return false;

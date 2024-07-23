@@ -113,23 +113,22 @@ export async function updateCMS(prevState, formData) {
         }
         console.log(`Build stdout: ${stdout}`);
 
-        return {
-          success: true,
-        };
-
         // Restart the server using PM2
-        // exec("npm run start", (error, stdout, stderr) => {
-        //   if (error) {
-        //     console.error(`Error restarting server: ${error.message}`);
-        //     return {
-        //       success: false,
-        //     };
-        //   }
-        //   if (stderr) {
-        //     console.error(`PM2 restart stderr: ${stderr}`);
-        //   }
-        //   console.log(`PM2 restart stdout: ${stdout}`);
-        // });
+        exec("pm2 restart x-verity-cms", (error, stdout, stderr) => {
+          if (error) {
+            console.error(`Error restarting server: ${error.message}`);
+            return {
+              success: false,
+            };
+          }
+          if (stderr) {
+            console.error(`PM2 restart stderr: ${stderr}`);
+          }
+          console.log(`PM2 restart stdout: ${stdout}`);
+          return {
+            success: true,
+          };
+        });
       });
     });
   });

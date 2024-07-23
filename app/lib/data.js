@@ -594,8 +594,7 @@ export async function retrieveUserRoles(userID) {
 export async function fetchCurrentVersion() {
   const query = "SELECT current_version FROM version_control";
   try {
-    const results = await queryAsync(query);
-    return JSON.stringify(results[0]);
+    return await queryAsync(query);
   } catch (error) {
     console.error("Error fetching current version:", error);
     return null;
@@ -888,8 +887,6 @@ export async function updateTablesColumns(formName, fields, id) {
 }
 
 export async function queryAsync(query, values = []) {
-  console.log(query);
-  console.log(values);
   let connection;
   try {
     connection = await pool.getConnection();

@@ -11,7 +11,7 @@ import {
 import UpdateUi from "../ui/update-ui";
 
 export default async function Dashboard() {
-  // const version = await versionCheck();
+  const version = await versionCheck();
   const articleCount = JSON.parse(await fetchArticleCount())[0];
   const pageCount = JSON.parse(await fetchPagesCount())[0];
   const caseStudiesCount = JSON.parse(await fetchCaseStudiesCount())[0];
@@ -20,7 +20,7 @@ export default async function Dashboard() {
     <div className="flex flex-col h-full">
       <NavBar page="Dashboard" />
       <main className="pl-10 pr-10 pt-5">
-        {/* {version && <UpdateUi />} */}
+        {version && <UpdateUi />}
         <div className="mb-10">
           <h2 className="text-15-grey mb-5">Overview</h2>
           <div className="grid grid-cols-4 gap-x-7">
