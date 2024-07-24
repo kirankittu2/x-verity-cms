@@ -111,13 +111,16 @@ export default function Create({
   }
 
   function mutateGroupData(name, data, parent) {
+    // console.log("name :" + name);
+    // console.log("data :" + data);
+    // console.log("parent :" + parent);
     setData((prevData) => {
       const parentArray = prevData[parent] || [];
       const updatedArray = parentArray.filter(
         (item) => !Object.keys(item).includes(name)
       );
       updatedArray.push({ [name]: data });
-
+      // console.log(updatedArray);
       return {
         ...prevData,
         [parent]: updatedArray,
@@ -367,12 +370,18 @@ function TextComponent({
   parent = "",
 }) {
   function fetchValue(parent, child) {
+    console.log(parent);
+    console.log(child);
+    let childValue = "";
     const parentData = data[parent] || "";
-    if (parentData == "") return "";
+    if (parentData == "") return childValue;
 
-    const childValue = parentData.map((item) => {
-      return item[child];
+    parentData.map((item) => {
+      if (item[child]) {
+        childValue = item[child];
+      }
     });
+
     return childValue;
   }
 

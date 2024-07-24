@@ -40,7 +40,9 @@ export default function GroupFields({
         type: selectedField,
         children: [],
       };
-      const newData = addChild(allfields, groupParentValue, data);
+
+      const fields = addChild(allfields, groupParentValue, data);
+      addFields(fields);
       togglePopup(!popup);
     } else {
       setError(true);
