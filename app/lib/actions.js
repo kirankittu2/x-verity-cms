@@ -17,8 +17,8 @@ import { generateRandomNumber, newVersionCheck } from "./utils";
 import { sendEmail, sendmail } from "./mail";
 import { get, set } from "./session-store";
 import { redirect } from "next/navigation";
-import bcrypt from "bcrypt";
-import { exec } from "child_process";
+import bcrypt from "bcryptjs";
+import { exec, execFile } from "child_process";
 import path from "path";
 import { z } from "zod";
 
@@ -73,137 +73,20 @@ export async function createCategory(formData) {
 }
 
 export async function updateCMS(prevState, formData) {
-  const repoPath = path.join(__dirname, "../../../");
-
-  exec(`cd ${repoPath} && git pull origin dev`, (error, stdout, stderr) => {
+  console.log("Webhook received");
+  exec("update.sh", (error, stdout, stderr) => {
     if (error) {
-      console.error(`Error pulling updates: ${error.message}`);
-      return {
-        success: false,
-      };
+      console.error(`Error executing script: ${error.message}`);
+      return "Update failed";
     }
     if (stderr) {
-      console.error(`git pull stderr: ${stderr}`);
+      console.error(`Script stderr: ${stderr}`);
+      return "Update failed";
     }
-    console.log(`git pull stdout: ${stdout}`);
-
-    // Install new dependencies
-    exec("npm install", { cwd: repoPath }, (error, stdout, stderr) => {
-      if (error) {
-        console.error(`Error installing dependencies: ${error.message}`);
-        return {
-          success: false,
-        };
-      }
-      if (stderr) {
-        console.error(`npm install stderr: ${stderr}`);
-      }
-      console.log(`npm install stdout: ${stdout}`);
-
-      // Build the React app
-      exec("npm run build", { cwd: repoPath }, (error, stdout, stderr) => {
-        if (error) {
-          console.error(`Error building the app: ${error.message}`);
-          return {
-            success: false,
-          };
-        }
-        if (stderr) {
-          console.error(`Build stderr: ${stderr}`);
-        }
-        console.log(`Build stdout: ${stdout}`);
-
-        // Restart the server using PM2
-        exec("pm2 restart x-verity-cms", (error, stdout, stderr) => {
-          if (error) {
-            console.error(`Error restarting server: ${error.message}`);
-            return {
-              success: false,
-            };
-          }
-          if (stderr) {
-            console.error(`PM2 restart stderr: ${stderr}`);
-          }
-          console.log(`PM2 restart stdout: ${stdout}`);
-          return {
-            success: true,
-          };
-        });
-      });
-    });
+    console.log(`Script stdout: ${stdout}`);
+    return "Update triggered";
   });
 }
-
-// export async function updateCMS(formData) {
-// const version = await newVersionCheck();
-// const response = await fetch(`http://localhost:3004/zip/${version}`);
-// const arrayBuffer = await response.arrayBuffer();
-// const zipBuffer = Buffer.from(arrayBuffer);
-// const tempExtractPath = path.join(process.cwd(), "temp_extracted");
-// const backups = path.join(process.cwd(), "backups");
-// const nextFolderPath = path.join(process.cwd(), ".next");
-// try {
-//   await isUpdated("1");
-
-//   if (!existsSync(backups)) {
-//     fs.promises.mkdir(backups);
-//   }
-//   const currentDateFolder = path.join(backups, getCurrentDate());
-
-//   await fss
-//     .ensureDir(currentDateFolder)
-//     .then(async () => {
-//       console.log(`Folder '${currentDateFolder}' created successfully!`);
-
-//       return await fss.copy(nextFolderPath, currentDateFolder);
-//     })
-//     .then(() => {
-//       console.log("Contents copied successfully!");
-//     })
-//     .catch((err) => {
-//       console.error("Error:", err);
-//     });
-
-//   if (!existsSync(tempExtractPath)) {
-//     fs.promises.mkdir(tempExtractPath);
-//   }
-//   const zipFilePath = path.join(tempExtractPath, `${version}.zip`);
-//   await fs.promises.writeFile(zipFilePath, zipBuffer);
-
-//   await fss.emptyDir(nextFolderPath);
-
-//   const zip = new AdmZip(zipFilePath);
-//   zip.extractAllTo(nextFolderPath, true);
-
-//   const data = await fetchCurrentVersion();
-//   const pr_version = JSON.parse(data).current_version;
-//   await updateVersion(pr_version, version);
-//   await isUpdated("0");
-
-// exec("npm run start", (error, stdout, stderr) => {
-//   if (error) {
-//     console.error(`Error restarting server: ${error}`);
-//   } else {
-//     console.log("Server restarted successfully");
-//   }
-// });
-// } catch (error) {
-//   const currentDateFolderBackup = path.join(backups, getCurrentDate());
-//   await fss.emptyDir(nextFolderPath);
-//   await fss.copy(currentDateFolderBackup, nextFolderPath);
-//   console.error("Error updating CMS:", error);
-
-//   return { success: false, error: "Failed to update CMS" };
-// } finally {
-//   fs.rmdir(tempExtractPath, { recursive: true }, (err) => {
-//     if (err) {
-//       console.error(`Error removing directory: ${err}`);
-//     } else {
-//       console.log("Directory removed successfully!");
-//     }
-//   });
-// }
-// }
 
 function getCurrentDate() {
   const today = new Date();

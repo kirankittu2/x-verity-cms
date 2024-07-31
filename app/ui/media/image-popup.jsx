@@ -6,7 +6,6 @@ import { redirect, useRouter, useSearchParams } from "next/navigation";
 
 export default function ImagePopup({ item }) {
   const details = JSON.parse(item)[0];
-  console.log(details);
   const router = useRouter();
   const searchParams = useSearchParams();
 

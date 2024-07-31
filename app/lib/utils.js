@@ -28,7 +28,7 @@ export function generatePagination(currentPage, totalPages) {
 }
 
 export async function newVersionCheck() {
-  const response = await fetch("http://localhost/cms/version", {
+  const response = await fetch("https://cms.x-verity.com/version", {
     method: "GET",
     cache: "no-store",
   });
@@ -41,7 +41,6 @@ export async function versionCheck() {
   const version = await fetchCurrentVersion();
   const currentVersion = JSON.parse(version)[0].current_version;
   const data = await newVersionCheck();
-
   if ("v2.0.0" !== currentVersion) {
     return true;
   } else {

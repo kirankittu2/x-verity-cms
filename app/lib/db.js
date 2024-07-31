@@ -1,4 +1,12 @@
 import mysql2 from "mysql2/promise";
+import dotenv from "dotenv";
+const env = process.env.NODE_ENV || "development";
+
+if (env === "development") {
+  dotenv.config({ path: ".env.local" });
+} else if (env === "production") {
+  dotenv.config({ path: ".env.prod" });
+}
 
 var pool = mysql2.createPool({
   host: "72.167.133.180",

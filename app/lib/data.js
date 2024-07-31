@@ -4,7 +4,7 @@ import pool from "@/app/lib/db";
 import { revalidatePath, unstable_noStore } from "next/cache";
 import { redirect } from "next/navigation";
 import { auth } from "@/auth";
-import bcrypt from "bcrypt";
+import bcrypt from "bcryptjs";
 import { z } from "zod";
 
 const IMAGES_PER_PAGE = 18;
@@ -242,8 +242,6 @@ export async function deletePages(data, unique_name) {
 }
 
 export async function mutateStatus(data, value, unique_name) {
-  console.log("data");
-  console.log(data);
   const filteredArray = data.filter((value) => value !== null);
   const placeholders = filteredArray.map(() => "?").join(",");
   const query = `UPDATE ${unique_name} SET status = ? WHERE id IN (${placeholders})`;
@@ -652,7 +650,6 @@ export default async function storeActivity(title, type) {
     refinedType = "Case Study";
   }
   const res = await auth();
-  console.log(res);
   const author = res.user.first_name;
 
   const query = `INSERT INTO activities (title, type, author) VALUES (?, ?, ?)`;

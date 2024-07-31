@@ -1,5 +1,5 @@
 import { CKEditor } from "@ckeditor/ckeditor5-react";
-import Editor from "@/ckeditor5";
+import Editor from "../../ckeditor5";
 
 export default function CustomEditor({
   name,

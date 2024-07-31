@@ -20,7 +20,6 @@ export default async function ListOfArticles({ searchParams }) {
   const data = JSON.parse(
     await retrieveAll(table_name, Title, Type, Status, currentPage - 1)
   );
-  console.log(data);
   const categories = await retrieveCategories(table_name);
 
   return (
