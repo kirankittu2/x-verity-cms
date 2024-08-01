@@ -79,7 +79,9 @@ export async function createCategory(formData) {
 
 export async function updateCMS(prevState, formData) {
   console.log("Webhook received");
-  exec("update.sh", (error, stdout, stderr) => {
+  const scriptPath = path.join(__dirname, "../../../update.sh");
+  console.log(scriptPath);
+  exec(scriptPath, (error, stdout, stderr) => {
     if (error) {
       console.error(`Error executing script: ${error.message}`);
       return "Update failed";

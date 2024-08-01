@@ -9,4 +9,4 @@ npm install
 # # Restart the application (assuming you use PM2)
 pm2 restart all
 
-# echo "Application updated successfully"
+echo "Application updated successfully"
