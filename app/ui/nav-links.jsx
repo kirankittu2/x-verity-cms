@@ -110,6 +110,13 @@ const Adminlinks = [
     icon: users,
     children: [],
   },
+  {
+    id: "8",
+    name: "Test",
+    href: "/dashboard/forms",
+    icon: users,
+    children: [],
+  },
 ];
 
 const Employeelinks = [
@@ -199,6 +206,13 @@ const Employeelinks = [
   {
     id: "6",
     name: "Forms",
+    href: "/dashboard/forms",
+    icon: users,
+    children: [],
+  },
+  {
+    id: "7",
+    name: "Test",
     href: "/dashboard/forms",
     icon: users,
     children: [],
