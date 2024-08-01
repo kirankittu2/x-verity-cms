@@ -21,8 +21,13 @@ import bcrypt from "bcryptjs";
 import { exec, execFile } from "child_process";
 import path from "path";
 import { z } from "zod";
+import { headers } from "next/headers";
 
 export async function authenticate(prevState, formData) {
+  const headersList = headers();
+  const referer = headersList.get("X-Forwarded-Host");
+  console.log(referer);
+
   try {
     await signIn("credentials", formData);
   } catch (error) {
