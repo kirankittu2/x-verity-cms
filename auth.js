@@ -48,4 +48,5 @@ export const { auth, signIn, signOut } = NextAuth({
       },
     }),
   ],
+  trustHost: true,
 });
