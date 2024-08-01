@@ -1,12 +1,11 @@
 #!/bin/bash
 
-# Pull the latest code from the repository
 git pull origin dev
 
-# Install any new dependencies
 npm install
 
-# # Restart the application (assuming you use PM2)
+npm run build
+
 pm2 restart all
 
 echo "Application updated successfully"
