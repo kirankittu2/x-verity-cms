@@ -7,6 +7,7 @@ import { getUser, retrieveUserRoles } from "@/app/lib/data";
 
 export const { auth, signIn, signOut } = NextAuth({
   ...authConfig,
+  trustHost: true,
   callbacks: {
     ...authConfig.callbacks,
     async session({ token, session }) {
@@ -48,5 +49,4 @@ export const { auth, signIn, signOut } = NextAuth({
       },
     }),
   ],
-  trustHost: true,
 });
