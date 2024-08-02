@@ -15,7 +15,14 @@ export default async function Dashboard() {
   const articleCount = JSON.parse(await fetchArticleCount())[0];
   const pageCount = JSON.parse(await fetchPagesCount())[0];
   const caseStudiesCount = JSON.parse(await fetchCaseStudiesCount())[0];
-  const socket = new WebSocket("ws://localhost:8080");
+  let socketUrl;
+  if (process.env.NODE_ENV === "development") {
+    socketUrl = "ws://localhost:8080";
+  } else {
+    socketUrl = "wss://https://cms.qcentrio.com:8080";
+  }
+
+  const socket = new WebSocket(socketUrl);
 
   socket.onopen = () => {
     console.log("WebSocket connection established");
