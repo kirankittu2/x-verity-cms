@@ -15,12 +15,27 @@ export default async function Dashboard() {
   const articleCount = JSON.parse(await fetchArticleCount())[0];
   const pageCount = JSON.parse(await fetchPagesCount())[0];
   const caseStudiesCount = JSON.parse(await fetchCaseStudiesCount())[0];
+  const socket = new WebSocket("ws://localhost:8080");
+
+  socket.onopen = () => {
+    console.log("WebSocket connection established");
+  };
+
+  socket.onmessage = (event) => {
+    console.log(event.data);
+    if (
+      event.data === "Update successful" ||
+      event.data.startsWith("inside :Update failed")
+    ) {
+      console.log("Update successful");
+    }
+  };
 
   return (
     <div className="flex flex-col h-full">
       <NavBar page="Dashboard" />
       <main className="pl-10 pr-10 pt-5">
-        {version && <UpdateUi />}
+        {version && <UpdateUi socket={socket} />}
         <div className="mb-10">
           <h2 className="text-15-grey mb-5">Overview</h2>
           <div className="grid grid-cols-4 gap-x-7">

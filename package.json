@@ -3,9 +3,9 @@
   "version": "8.0.0",
   "private": true,
   "scripts": {
-    "dev": "cross-env PORT=3001 next dev",
+    "dev": " cross-env NODE_ENV=development PORT=3001 next dev",
     "build": "next build",
-    "start": "cross-env PORT=3001 next start",
+    "start": "cross-env NODE_ENV=production PORT=3001 next start",
     "lint": "next lint"
   },
   "dependencies": {
@@ -57,6 +57,7 @@
     "terser-webpack-plugin": "^5.3.10",
     "use-debounce": "^10.0.0",
     "webpack-cli": "^5.1.4",
+    "ws": "^8.18.0",
     "zod": "^3.22.4"
   },
   "devDependencies": {

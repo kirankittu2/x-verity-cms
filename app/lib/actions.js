@@ -77,24 +77,6 @@ export async function createCategory(formData) {
   revalidatePath(`/dashboard/${page}/category`);
 }
 
-export async function updateCMS(prevState, formData) {
-  console.log("Webhook received");
-  const scriptPath = path.join(__dirname, "../../../update.sh");
-  console.log(scriptPath);
-  exec(scriptPath, (error, stdout, stderr) => {
-    if (error) {
-      console.error(`Error executing script: ${error.message}`);
-      return "Update failed";
-    }
-    if (stderr) {
-      console.error(`Script stderr: ${stderr}`);
-      return "Update failed";
-    }
-    console.log(`Script stdout: ${stdout}`);
-    return "Update triggered";
-  });
-}
-
 function getCurrentDate() {
   const today = new Date();
   const year = today.getFullYear();
