@@ -1,6 +1,6 @@
 import WebSocket from "ws";
 
-const wss = new WebSocket.Server({ port: 8080 });
+const wss = new WebSocket.Server({ port: 8000 });
 let scriptPath;
 
 wss.on("connection", (ws) => {

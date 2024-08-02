@@ -2,16 +2,20 @@
 
 import Button from "./button";
 import { updateCMS } from "../lib/actions";
+import { useFormState } from "react-dom";
 
-export default function UpdateUi({ socket }) {
-  function handleUpdate() {
-    socket.send("update");
-  }
+const initialState = {
+  success: false,
+};
 
+export default function UpdateUi() {
+  const [state, formAction] = useFormState(updateCMS, initialState);
   return (
     <div className="flex justify-between items-center custom-border bg-white p-3 mb-5">
       <p>New Update Available </p>
-      <Button onClick={handleUpdate} name="Update Now" />
+      <form action={formAction}>
+        <Button name="Update Now" />
+      </form>
     </div>
   );
 }
