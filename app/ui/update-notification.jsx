@@ -45,12 +45,10 @@ export default function UpdateNotification() {
       }
     };
 
-    websocket.onclose = () => {
+    websocket.onclose = (event) => {
+      console.log(event);
       console.log("Disconnected from WebSocket server");
-    };
-
-    websocket.onerror = (error) => {
-      console.log(error);
+      console.log(`Code: ${event.code}, Reason: ${event.reason}`);
     };
 
     return () => {
