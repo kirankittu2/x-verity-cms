@@ -1,22 +1,22 @@
 "use client";
 
+import { type } from "os";
 import { useEffect, useState } from "react";
-import dotenv from "dotenv";
-
 const env = process.env.NODE_ENV || "development";
-if (env === "development") {
-  dotenv.config({ path: ".env.local" });
-} else if (env === "production") {
-  dotenv.config({ path: ".env.prod" });
-}
 
 export default function UpdateNotification() {
   const [messages, setMessages] = useState([]);
   const [ws, setWs] = useState(null);
 
   useEffect(() => {
-    console.log(process.env.WEB_SOCKET_PATH);
-    const websocket = new WebSocket(process.env.WEB_SOCKET_PATH);
+    let socketPath;
+    if (env === "development") {
+      socketPath = "ws://72.167.133.180:3003";
+    } else if (env === "production") {
+      socketPath = "wss://72.167.133.180:3003";
+    }
+
+    const websocket = new WebSocket(socketPath);
 
     websocket.onopen = () => {
       console.log("Connected to WebSocket server");
@@ -53,6 +53,12 @@ export default function UpdateNotification() {
       websocket.close();
     };
   }, []);
+
+  useEffect(() => {
+    if (ws && ws.readyState === WebSocket.OPEN) {
+      ws.send(JSON.stringify({ type: "load", message: "Successfull" }));
+    }
+  }, [ws]);
 
   return (
     <div>

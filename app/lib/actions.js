@@ -87,8 +87,18 @@ export async function createCategory(formData) {
 }
 
 export async function updateCMS(prevState, formData) {
-  const websocket = new WebSocket(process.env.WEB_SOCKET_PATH);
-  const scriptPath = path.join(__dirname, process.env.SHELL_SCRIPT_PATH);
+  let socketPath;
+  let path;
+  if (env === "development") {
+    socketPath = "ws://72.167.133.180:3003";
+    path = "../../../../update.sh";
+  } else if (env === "production") {
+    socketPath = "wss://72.167.133.180:3003";
+    path = "../../../update.sh";
+  }
+
+  const websocket = new WebSocket(socketPath);
+  const scriptPath = path.join(__dirname, path);
   exec(scriptPath, (error, stdout, stderr) => {
     if (error) {
       console.error(`Error executing script: ${error.message}`);
