@@ -9,10 +9,10 @@ if (env === "development") {
 }
 
 var pool = mysql2.createPool({
-  host: "72.167.133.180",
-  user: "qcadmin",
-  password: `Dj"Hi4PaJt9Kt_^`,
-  database: "qcadmin_xv_cms",
+  host: process.env.MYSQL_HOST,
+  user: process.env.MYSQL_USER,
+  password: process.env.MYSQL_PASS,
+  database: process.env.MYSQL_DB,
   waitForConnections: true,
   connectionLimit: 0,
   queueLimit: 0,

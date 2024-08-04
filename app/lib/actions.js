@@ -21,6 +21,7 @@ import bcrypt from "bcryptjs";
 import { exec, execFile } from "child_process";
 import path from "path";
 import { z } from "zod";
+// import WebSocket from "ws";
 import { headers } from "next/headers";
 
 export async function authenticate(prevState, formData) {
@@ -78,19 +79,28 @@ export async function createCategory(formData) {
 }
 
 export async function updateCMS(prevState, formData) {
-  console.log("Webhook received");
+  const websocket = new WebSocket("ws://72.167.133.180:3003");
   const scriptPath = path.join(__dirname, "../../../update.sh");
-  console.log(scriptPath);
   exec(scriptPath, (error, stdout, stderr) => {
     if (error) {
       console.error(`Error executing script: ${error.message}`);
+      websocket.send(JSON.stringify({ type: "error", message: error.message }));
       return "Update failed";
     }
     if (stderr) {
       console.error(`Script stderr: ${stderr}`);
+      websocket.send(JSON.stringify({ type: "error", message: "stderr" }));
       return "Update failed";
     }
     console.log(`Script stdout: ${stdout}`);
+
+    websocket.send(
+      JSON.stringify({
+        type: "success",
+        message: "Application updated successfully",
+      })
+    );
+
     return "Update triggered";
   });
 }

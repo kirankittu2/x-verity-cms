@@ -9,6 +9,7 @@ import {
   fetchPagesCount,
 } from "../lib/data";
 import UpdateUi from "../ui/update-ui";
+import UpdateNotification from "../ui/update-notification";
 
 export default async function Dashboard() {
   const version = await versionCheck();
@@ -19,6 +20,7 @@ export default async function Dashboard() {
   return (
     <div className="flex flex-col h-full">
       <NavBar page="Dashboard" />
+      <UpdateNotification />
       <main className="pl-10 pr-10 pt-5">
         {version && <UpdateUi />}
         <div className="mb-10">
