@@ -79,7 +79,7 @@ export async function createCategory(formData) {
 }
 
 export async function updateCMS(prevState, formData) {
-  const websocket = new WebSocket("ws://72.167.133.180:3003");
+  const websocket = new WebSocket("wss://72.167.133.180:3003");
   const scriptPath = path.join(__dirname, "../../../update.sh");
   exec(scriptPath, (error, stdout, stderr) => {
     if (error) {

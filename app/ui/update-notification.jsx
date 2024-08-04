@@ -7,7 +7,7 @@ export default function UpdateNotification() {
   const [ws, setWs] = useState(null);
 
   useEffect(() => {
-    const websocket = new WebSocket("ws://72.167.133.180:3003");
+    const websocket = new WebSocket("wss://72.167.133.180:3003");
 
     websocket.onopen = () => {
       console.log("Connected to WebSocket server");
