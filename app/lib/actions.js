@@ -25,6 +25,7 @@ import { z } from "zod";
 // import WebSocket from "ws";
 import { headers } from "next/headers";
 
+const env = process.env.NODE_ENV || "development";
 if (env === "development") {
   dotenv.config({ path: ".env.local" });
 } else if (env === "production") {
