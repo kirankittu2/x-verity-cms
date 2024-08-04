@@ -128,7 +128,6 @@ export async function updateCMS(prevState, formData) {
       websocket.send(JSON.stringify({ type: "error", message: "stderr" }));
       return "Update failed";
     }
-    console.log(`Script stdout: ${stdout}`);
 
     websocket.send(
       JSON.stringify({
@@ -136,6 +135,18 @@ export async function updateCMS(prevState, formData) {
         message: "Application updated successfully",
       })
     );
+
+    exec("pm2 restart all", (error, stdout, stderr) => {
+      if (error) {
+        console.error(`Error restarting PM2: ${error.message}`);
+        return;
+      }
+      if (stderr) {
+        console.error(`PM2 stderr: ${stderr}`);
+        return;
+      }
+      console.log(`PM2 stdout: ${stdout}`);
+    });
 
     return "Update triggered";
   });
