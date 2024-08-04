@@ -2,6 +2,7 @@
 
 import { AuthError } from "next-auth";
 import { signIn, signOut } from "@/auth";
+import dotenv from "dotenv";
 import {
   getOTP,
   getUser,
@@ -23,6 +24,12 @@ import path from "path";
 import { z } from "zod";
 // import WebSocket from "ws";
 import { headers } from "next/headers";
+
+if (env === "development") {
+  dotenv.config({ path: ".env.local" });
+} else if (env === "production") {
+  dotenv.config({ path: ".env.prod" });
+}
 
 export async function authenticate(prevState, formData) {
   const headersList = headers();
@@ -79,8 +86,8 @@ export async function createCategory(formData) {
 }
 
 export async function updateCMS(prevState, formData) {
-  const websocket = new WebSocket("wss://72.167.133.180:3003");
-  const scriptPath = path.join(__dirname, "../../../update.sh");
+  const websocket = new WebSocket(process.env.WEB_SOCKET_PATH);
+  const scriptPath = path.join(__dirname, process.env.SHELL_SCRIPT_PATH);
   exec(scriptPath, (error, stdout, stderr) => {
     if (error) {
       console.error(`Error executing script: ${error.message}`);

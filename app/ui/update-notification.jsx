@@ -1,13 +1,20 @@
 "use client";
 
 import { useEffect, useState } from "react";
+import dotenv from "dotenv";
+
+if (env === "development") {
+  dotenv.config({ path: ".env.local" });
+} else if (env === "production") {
+  dotenv.config({ path: ".env.prod" });
+}
 
 export default function UpdateNotification() {
   const [messages, setMessages] = useState([]);
   const [ws, setWs] = useState(null);
 
   useEffect(() => {
-    const websocket = new WebSocket("wss://72.167.133.180:3003");
+    const websocket = new WebSocket(process.env.WEB_SOCKET_PATH);
 
     websocket.onopen = () => {
       console.log("Connected to WebSocket server");
