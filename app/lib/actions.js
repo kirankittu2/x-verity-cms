@@ -136,17 +136,30 @@ export async function updateCMS(prevState, formData) {
       })
     );
 
-    exec("pm2 restart all", (error, stdout, stderr) => {
-      if (error) {
-        console.error(`Error restarting PM2: ${error.message}`);
-        return;
+    websocket.send(
+      JSON.stringify({
+        type: "success",
+        message: "Application updated successfully",
+      }),
+      (err) => {
+        if (err) {
+          console.error(`Error sending WebSocket message: ${err.message}`);
+          return;
+        }
+
+        exec("pm2 restart all", (error, stdout, stderr) => {
+          if (error) {
+            console.error(`Error restarting PM2: ${error.message}`);
+            return;
+          }
+          if (stderr) {
+            console.error(`PM2 stderr: ${stderr}`);
+            return;
+          }
+          console.log(`PM2 stdout: ${stdout}`);
+        });
       }
-      if (stderr) {
-        console.error(`PM2 stderr: ${stderr}`);
-        return;
-      }
-      console.log(`PM2 stdout: ${stdout}`);
-    });
+    );
 
     return "Update triggered";
   });

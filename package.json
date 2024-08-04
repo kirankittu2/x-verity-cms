@@ -30,6 +30,7 @@
     "@ckeditor/ckeditor5-typing": "41.1.0",
     "@ckeditor/ckeditor5-ui": "^41.1.0",
     "@ckeditor/ckeditor5-undo": "41.1.0",
+    "@ckeditor/ckeditor5-watchdog": "^42.0.2",
     "@reduxjs/toolkit": "^2.2.1",
     "autoprefixer": "^10.0.1",
     "bcryptjs": "^2.4.3",
