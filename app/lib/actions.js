@@ -88,18 +88,18 @@ export async function createCategory(formData) {
 
 export async function updateCMS(prevState, formData) {
   let socketPath;
-  let path;
+  let scriptPath;
   if (env === "development") {
     socketPath = "ws://socket.qcentrio.com";
-    path = "../../../../update.sh";
+    scriptPath = "../../../../update.sh";
   } else if (env === "production") {
     socketPath = "wss://socket.qcentrio.com";
-    path = "../../../update.sh";
+    scriptPath = "../../../update.sh";
   }
 
   const websocket = new WebSocket(socketPath);
-  const scriptPath = path.join(__dirname, path);
-  exec(scriptPath, (error, stdout, stderr) => {
+  const scriptPathAB = path.join(__dirname, scriptPath);
+  exec(scriptPathAB, (error, stdout, stderr) => {
     if (error) {
       console.error(`Error executing script: ${error.message}`);
       websocket.send(JSON.stringify({ type: "error", message: error.message }));
