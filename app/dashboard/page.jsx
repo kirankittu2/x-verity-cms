@@ -20,9 +20,9 @@ export default async function Dashboard() {
   return (
     <div className="flex flex-col h-full">
       <NavBar page="Dashboard" />
-      <UpdateNotification />
       <main className="pl-10 pr-10 pt-5">
         {version && <UpdateUi />}
+        <UpdateNotification />
         <div className="mb-10">
           <h2 className="text-15-grey mb-5">Overview</h2>
           <div className="grid grid-cols-4 gap-x-7">
