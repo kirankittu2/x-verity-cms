@@ -112,8 +112,6 @@ export async function updateCMS(prevState, formData) {
         return "chmod failed";
       }
       console.log(`Script stdout: ${stdout}`);
-
-      return "chmod triggered";
     }
   );
 
@@ -128,13 +126,6 @@ export async function updateCMS(prevState, formData) {
       websocket.send(JSON.stringify({ type: "error", message: "stderr" }));
       return "Update failed";
     }
-
-    websocket.send(
-      JSON.stringify({
-        type: "success",
-        message: "Application updated successfully",
-      })
-    );
 
     websocket.send(
       JSON.stringify({
