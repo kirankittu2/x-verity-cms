@@ -1,9 +1,9 @@
-# git pull origin dev
+git pull origin dev
 
-# npm install
+npm install
 
-# npm run build
+npm run build
 
-# pm2 restart all
+pm2 restart all
 
 echo "Application updated successfully"
