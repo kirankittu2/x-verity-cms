@@ -15,6 +15,7 @@ export default function UpdateNotification() {
   const [ws, setWs] = useState(null);
 
   useEffect(() => {
+    console.log(process.env.WEB_SOCKET_PATH);
     const websocket = new WebSocket(process.env.WEB_SOCKET_PATH);
 
     websocket.onopen = () => {
