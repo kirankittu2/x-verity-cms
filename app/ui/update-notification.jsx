@@ -51,6 +51,10 @@ export default function UpdateNotification() {
       console.log(`Code: ${event.code}, Reason: ${event.reason}`);
     };
 
+    websocket.onerror = (error) => {
+      console.log(error);
+    };
+
     return () => {
       websocket.close();
     };
