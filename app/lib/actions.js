@@ -90,10 +90,10 @@ export async function updateCMS(prevState, formData) {
   let socketPath;
   let path;
   if (env === "development") {
-    socketPath = "ws://72.167.133.180:3003";
+    socketPath = "ws://socket.qcentrio.com";
     path = "../../../../update.sh";
   } else if (env === "production") {
-    socketPath = "wss://72.167.133.180:3003";
+    socketPath = "wss://socket.qcentrio.com";
     path = "../../../update.sh";
   }
 

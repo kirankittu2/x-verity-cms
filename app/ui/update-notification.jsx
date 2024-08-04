@@ -11,9 +11,9 @@ export default function UpdateNotification() {
   useEffect(() => {
     let socketPath;
     if (env === "development") {
-      socketPath = "ws://72.167.133.180:3003";
+      socketPath = "ws://socket.qcentrio.com";
     } else if (env === "production") {
-      socketPath = "wss://72.167.133.180:3003";
+      socketPath = "wss://socket.qcentrio.com";
     }
 
     const websocket = new WebSocket(socketPath);
