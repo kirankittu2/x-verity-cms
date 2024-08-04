@@ -2,7 +2,7 @@ git pull origin dev
 
 npm install
 
-npm run building
+npm run build
 
 pm2 restart all
 

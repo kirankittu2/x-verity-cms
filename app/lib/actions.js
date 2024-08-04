@@ -99,6 +99,24 @@ export async function updateCMS(prevState, formData) {
 
   const websocket = new WebSocket(socketPath);
   const scriptPathAB = path.join(__dirname, scriptPath);
+
+  exec(
+    "chmod a+rwx /home/qcadmin/public_html/x-verity-cms/update.sh",
+    (error, stdout, stderr) => {
+      if (error) {
+        console.error(`Error executing script: ${error.message}`);
+        return "chmod failed";
+      }
+      if (stderr) {
+        console.error(`Script stderr: ${stderr}`);
+        return "chmod failed";
+      }
+      console.log(`Script stdout: ${stdout}`);
+
+      return "chmod triggered";
+    }
+  );
+
   exec(scriptPathAB, (error, stdout, stderr) => {
     if (error) {
       console.error(`Error executing script: ${error.message}`);
