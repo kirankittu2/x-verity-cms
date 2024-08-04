@@ -1,5 +1,3 @@
-#!/bin/bash
-
 git pull origin dev
 
 npm install
