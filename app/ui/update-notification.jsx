@@ -49,6 +49,10 @@ export default function UpdateNotification() {
       console.log("Disconnected from WebSocket server");
     };
 
+    websocket.onerror = (error) => {
+      console.log(error);
+    };
+
     return () => {
       websocket.close();
     };
