@@ -5,7 +5,7 @@ import { useEffect, useState } from "react";
 const env = process.env.NODE_ENV || "development";
 
 export default function UpdateNotification() {
-  const [messages, setMessages] = useState("");
+  const [messages, setMessages] = useState({});
   const [ws, setWs] = useState(null);
 
   useEffect(() => {
@@ -46,9 +46,7 @@ export default function UpdateNotification() {
     };
 
     websocket.onclose = (event) => {
-      console.log(event);
       console.log("Disconnected from WebSocket server");
-      console.log(`Code: ${event.code}, Reason: ${event.reason}`);
     };
 
     websocket.onerror = (error) => {
@@ -60,5 +58,5 @@ export default function UpdateNotification() {
     };
   }, []);
 
-  return <div>{messages}</div>;
+  return <div>{messages.message}</div>;
 }

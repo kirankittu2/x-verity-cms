@@ -100,63 +100,70 @@ export async function updateCMS(prevState, formData) {
   const websocket = new WebSocket(socketPath);
   const scriptPathAB = path.join(__dirname, scriptPath);
 
-  websocket.send(
-    JSON.stringify({ type: "load", message: "Application is being updated.." })
-  );
-
-  exec(
-    "chmod a+rwx /home/qcadmin/public_html/x-verity-cms/update.sh",
-    (error, stdout, stderr) => {
-      if (error) {
-        console.error(`Error executing script: ${error.message}`);
-        return "chmod failed";
-      }
-      if (stderr) {
-        console.error(`Script stderr: ${stderr}`);
-        return "chmod failed";
-      }
-      console.log(`Script stdout: ${stdout}`);
-    }
-  );
-
-  exec(scriptPathAB, (error, stdout, stderr) => {
-    if (error) {
-      console.error(`Error executing script: ${error.message}`);
-      websocket.send(JSON.stringify({ type: "error", message: error.message }));
-      return "Update failed";
-    }
-    if (stderr) {
-      console.error(`Script stderr: ${stderr}`);
-      websocket.send(JSON.stringify({ type: "error", message: "stderr" }));
-      return "Update failed";
-    }
-
+  websocket.addEventListener("open", () => {
     websocket.send(
       JSON.stringify({
-        type: "success",
-        message: "Application updated successfully",
-      }),
-      (err) => {
-        if (err) {
-          console.error(`Error sending WebSocket message: ${err.message}`);
-          return;
-        }
+        type: "load",
+        message: "Application is being updated..",
+      })
+    );
 
-        exec("pm2 restart all", (error, stdout, stderr) => {
-          if (error) {
-            console.error(`Error restarting PM2: ${error.message}`);
-            return;
-          }
-          if (stderr) {
-            console.error(`PM2 stderr: ${stderr}`);
-            return;
-          }
-          console.log(`PM2 stdout: ${stdout}`);
-        });
+    exec(
+      "chmod a+rwx /home/qcadmin/public_html/x-verity-cms/update.sh",
+      (error, stdout, stderr) => {
+        if (error) {
+          console.error(`Error executing script: ${error.message}`);
+          return "chmod failed";
+        }
+        if (stderr) {
+          console.error(`Script stderr: ${stderr}`);
+          return "chmod failed";
+        }
+        console.log(`Script stdout: ${stdout}`);
       }
     );
 
-    return "Update triggered";
+    exec(scriptPathAB, (error, stdout, stderr) => {
+      if (error) {
+        console.error(`Error executing script: ${error.message}`);
+        websocket.send(
+          JSON.stringify({ type: "error", message: error.message })
+        );
+        return "Update failed";
+      }
+      if (stderr) {
+        console.error(`Script stderr: ${stderr}`);
+        websocket.send(JSON.stringify({ type: "error", message: "stderr" }));
+        return "Update failed";
+      }
+
+      websocket.send(
+        JSON.stringify({
+          type: "success",
+          message: "Application updated successfully",
+        }),
+        (err) => {
+          if (err) {
+            console.error(`Error sending WebSocket message: ${err.message}`);
+            return;
+          }
+
+          exec("pm2 restart all", (error, stdout, stderr) => {
+            if (error) {
+              console.error(`Error restarting PM2: ${error.message}`);
+              return;
+            }
+            if (stderr) {
+              console.error(`PM2 stderr: ${stderr}`);
+              return;
+            }
+            console.log(`PM2 stdout: ${stdout}`);
+          });
+        }
+      );
+
+      return "Update triggered";
+    });
   });
 }
 
