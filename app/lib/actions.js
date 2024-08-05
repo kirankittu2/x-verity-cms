@@ -100,6 +100,10 @@ export async function updateCMS(prevState, formData) {
   const websocket = new WebSocket(socketPath);
   const scriptPathAB = path.join(__dirname, scriptPath);
 
+  websocket.send(
+    JSON.stringify({ type: "load", message: "Application is being updated.." })
+  );
+
   exec(
     "chmod a+rwx /home/qcadmin/public_html/x-verity-cms/update.sh",
     (error, stdout, stderr) => {

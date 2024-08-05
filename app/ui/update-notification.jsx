@@ -5,7 +5,7 @@ import { useEffect, useState } from "react";
 const env = process.env.NODE_ENV || "development";
 
 export default function UpdateNotification() {
-  const [messages, setMessages] = useState([]);
+  const [messages, setMessages] = useState();
   const [ws, setWs] = useState(null);
 
   useEffect(() => {
@@ -28,7 +28,7 @@ export default function UpdateNotification() {
       if (typeof event.data === "string") {
         try {
           const data = JSON.parse(event.data);
-          setMessages((prevMessages) => [...prevMessages, data]);
+          setMessages(data);
         } catch (e) {
           console.error("Error parsing JSON:", e);
         }
@@ -37,7 +37,7 @@ export default function UpdateNotification() {
         reader.onload = (data) => {
           const readerData = data.currentTarget.result;
           const parsedData = JSON.parse(readerData);
-          setMessages((prevMessages) => [...prevMessages, parsedData]);
+          setMessages(parsedData);
         };
         reader.readAsText(event.data);
       } else {
@@ -59,12 +59,6 @@ export default function UpdateNotification() {
       websocket.close();
     };
   }, []);
-
-  useEffect(() => {
-    if (ws && ws.readyState === WebSocket.OPEN) {
-      ws.send(JSON.stringify({ type: "load", message: "Successfull" }));
-    }
-  }, [ws]);
 
   return (
     <div>
