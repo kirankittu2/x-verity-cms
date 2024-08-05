@@ -60,16 +60,5 @@ export default function UpdateNotification() {
     };
   }, []);
 
-  return (
-    <div>
-      Update Messages
-      {messages.map((msg, index) => (
-        <li
-          key={index}
-          style={{ color: msg.type === "error" ? "red" : "green" }}>
-          {msg.message}
-        </li>
-      ))}
-    </div>
-  );
+  return <div>{msg.message}</div>;
 }
