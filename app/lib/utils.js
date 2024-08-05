@@ -41,7 +41,7 @@ export async function versionCheck() {
   const version = await fetchCurrentVersion();
   const currentVersion = JSON.parse(version)[0].current_version;
   const data = await newVersionCheck();
-  if ("v2.0.0" !== currentVersion) {
+  if (data !== currentVersion) {
     return true;
   } else {
     return false;
@@ -65,13 +65,16 @@ export async function dateConversion(originalTimestamp) {
 export async function mutateDBData(name, value, mutateData, unique_name) {
   if (name == "media") {
     if (value == "Delete") {
-      const response = await fetch("http://72.167.133.180:3002/files/delete", {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify({ filenames: mutateData }),
-      });
+      const response = await fetch(
+        "https://backend.qcentrio.com/files/delete",
+        {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify({ filenames: mutateData }),
+        }
+      );
 
       const data = await response.json();
       if (data.status == true) {

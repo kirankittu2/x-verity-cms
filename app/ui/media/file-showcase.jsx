@@ -75,7 +75,7 @@ export default function FileShowCase({ files, totalPages }) {
                       style={{ width: "100%", height: "100%" }}
                       width={150}
                       height={150}
-                      src={`http://72.167.133.180:3002/image/${file.uniquefilename}`}
+                      src={`https://backend.qcentrio.com/image/${file.uniquefilename}`}
                       alt=""
                       dangerouslyallowsvg="true"
                       data-option={file.id}
