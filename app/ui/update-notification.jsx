@@ -5,7 +5,7 @@ import { useEffect, useState } from "react";
 const env = process.env.NODE_ENV || "development";
 
 export default function UpdateNotification() {
-  const [messages, setMessages] = useState();
+  const [messages, setMessages] = useState("");
   const [ws, setWs] = useState(null);
 
   useEffect(() => {
@@ -60,5 +60,5 @@ export default function UpdateNotification() {
     };
   }, []);
 
-  return <div>{msg.message}</div>;
+  return <div>{messages}</div>;
 }
