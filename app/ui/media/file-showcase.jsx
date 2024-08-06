@@ -80,7 +80,7 @@ export default function FileShowCase({ files, totalPages }) {
                 key={index}
                 className="w-[150px] h-[150px] m-2 relative group cursor-pointer">
                 <input
-                  className="mr-2 absolute top-[10px] left-[10px] accent-black z-20 check"
+                  className="mr-2 absolute top-[10px] left-[10px] accent-black  check"
                   onChange={checkBoxData}
                   data-option={file.uniquefilename}
                   type="checkbox"
