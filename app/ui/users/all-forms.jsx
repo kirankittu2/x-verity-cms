@@ -66,24 +66,24 @@ export default function AllForms({ totalPages, forms }) {
                   onClick={handleCheckBox}
                   type="checkbox"></input>
               </th>
-              <th className="text-left p-5 border-r border-[#EBEBEB]">
+              <th className="text-left p-5 border-r border-l border-[#EBEBEB]">
                 Form Id
               </th>
-              <th className=" p-5">Form Name</th>
+              <th className="p-5 border-r border-[#EBEBEB]">Form Name</th>
             </tr>
           </thead>
           <tbody className="text-15-black activity-table-body text-center">
             {JSON.parse(forms).map((form, index) => {
               return (
                 <tr key={index}>
-                  <td className="px-5 p-2 flex justify-center mt-3">
+                  <td className="px-5 p-2 flex justify-center mt-3 ">
                     <input
                       className="check"
                       onChange={checkBoxData}
                       data-option={form.id}
                       type="checkbox"></input>
                   </td>
-                  <td className="p-5 border-r border-[#EBEBEB] text-left">
+                  <td className="p-5 border-r border-l border-[#EBEBEB] text-left w-[100px] text-center">
                     {form.id}
                   </td>
                   <td className=" border-r border-[#EBEBEB] text-center cursor-pointer">
@@ -93,10 +93,10 @@ export default function AllForms({ totalPages, forms }) {
                       {form.form_name}
                     </Link>
                   </td>
-                  <td className="px-5 p-2">
+                  <td className="px-5 p-2 w-[224px]">
                     <SelectBlack data={data} id={form.id} />
                   </td>
-                  <td className="px-5 p-2">
+                  <td className="px-5 p-2 w-[200px]">
                     <Button
                       onClick={handleOperations}
                       dataOption={form.id}

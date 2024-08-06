@@ -98,10 +98,10 @@ export default function UserTable({ totalPages, users }) {
                   <td className="p-5 border-r border-[#EBEBEB] text-left ">
                     {user.role}
                   </td>
-                  <td className="px-5 p-2">
+                  <td className="px-5 p-2  w-[224px]">
                     <SelectBlack data={data} id={user.id} />
                   </td>
-                  <td className="px-5 p-2">
+                  <td className="px-5 p-2  w-[200px]">
                     <Button
                       onClick={handleOperations}
                       dataOption={user.id}

@@ -79,13 +79,13 @@ export default function CategoryTable({ totaldata, totalPages, unique_name }) {
                       data-option={activity.id}
                       type="checkbox"></input>
                   </td>
-                  <td className="px-5 border-r border-[#EBEBEB] text-left cursor-pointer">
+                  <td className="px-5 border-r border-[#EBEBEB] text-left cursor-pointer w-full">
                     {activity.name}
                   </td>
-                  <td className="px-5 p-2">
+                  <td className="px-5 p-2 min-w-56">
                     <SelectBlack data={data} id={activity.id} />
                   </td>
-                  <td className="px-5 p-2">
+                  <td className="px-5 p-2 w-fit ">
                     <Button
                       onClick={handleOperations}
                       dataOption={activity.id}
