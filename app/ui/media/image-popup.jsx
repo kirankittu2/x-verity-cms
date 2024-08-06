@@ -29,7 +29,7 @@ export default function ImagePopup({ item }) {
       const imageTime = params?.get("time") || "";
       const currentPage = params?.get("page") || 1;
       router.push(
-        `https://cms.qcentrio.com/dashboard/media?${
+        `https://backend.qcentrio.com/dashboard/media?${
           imageTitle !== "" ? "title=" + imageTitle + "&" : ""
         }${imageType !== "" ? "type=" + imageType + "&" : ""}${
           imageTime !== "" ? "time=" + imageTime + "&" : ""

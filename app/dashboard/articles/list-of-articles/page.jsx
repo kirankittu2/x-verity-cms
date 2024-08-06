@@ -1,8 +1,4 @@
-import {
-  fetchPageNumber,
-  retrieveAll,
-  retrieveCategories,
-} from "@/app/lib/data";
+import { retrieveAll, retrieveCategories } from "@/app/lib/data";
 import Table from "@/app/ui/articles/table";
 import CreateNew from "@/app/ui/create-new";
 import Filter from "@/app/ui/filter";

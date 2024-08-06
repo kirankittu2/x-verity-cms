@@ -35,16 +35,16 @@ export default function Filter({ main, first, page = "" }) {
               onChange={(e) => handleSearch(e.target.value)}
             />
           </div>
-          <div className="flex-1 mr-2">
+          {/* <div className="flex-1 mr-2">
             <h3 className="text-15-grey mb-3">Category</h3>
             <Select data={first} name="image_types" />
-          </div>
-          {page !== "media" &&
+          </div> */}
+          {page !== "media" && (
             <div className="flex-1 mr-2">
               <h3 className="text-15-grey mb-3">Status</h3>
               <Select data={second} name="date" />
             </div>
-          }
+          )}
         </form>
       </div>
     </>

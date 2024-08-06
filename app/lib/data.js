@@ -9,6 +9,8 @@ import { z } from "zod";
 
 const IMAGES_PER_PAGE = 18;
 const ITEMS_PER_PAGES = 10;
+const USERS_PER_PAGE = 10;
+const FORMS_PER_PAGE = 10;
 
 export async function retrieveImages(name, type, currentPage) {
   const offset = currentPage * IMAGES_PER_PAGE;
@@ -25,12 +27,7 @@ export async function retrieveImages(name, type, currentPage) {
     params2.push(`%${name}%`);
   }
 
-  if (
-    type !== null &&
-    type !== undefined &&
-    type !== "" &&
-    type !== "All Media Items"
-  ) {
+  if (type !== null && type !== undefined && type !== "" && type !== "All") {
     query1 += ` AND type = ?`;
     query2 += ` AND type = ?`;
     params1.push(type);
@@ -98,12 +95,7 @@ export async function retrieveAll(
     params2.push(`%${name}%`);
   }
 
-  if (
-    type !== null &&
-    type !== undefined &&
-    type !== "" &&
-    type !== "All Media Items"
-  ) {
+  if (type !== null && type !== undefined && type !== "" && type !== "All") {
     query1 += ` AND type = ?`;
     query2 += ` AND type = ?`;
     params1.push(type);
@@ -141,28 +133,28 @@ export async function retrieveAll(
   }
 }
 
-export async function fetchPageNumber(unique_name, name, type, times) {
-  const { query, values } = handleFetchNumberofPages(
-    unique_name,
-    name,
-    type,
-    times
-  );
+// export async function fetchPageNumber(unique_name, name, type, times) {
+//   const { query, values } = handleFetchNumberofPages(
+//     unique_name,
+//     name,
+//     type,
+//     times
+//   );
 
-  try {
-    const results = await queryAsync(query, values);
-    const totalPages = Math.ceil(Number(results.length) / ITEMS_PER_PAGES);
-    return totalPages;
-  } catch (error) {
-    console.error("Error fetching page number:", error);
-    return null;
-  }
-}
+//   try {
+//     const results = await queryAsync(query, values);
+//     const totalPages = Math.ceil(Number(results.length) / ITEMS_PER_PAGES);
+//     return totalPages;
+//   } catch (error) {
+//     console.error("Error fetching page number:", error);
+//     return null;
+//   }
+// }
 
 function handleFetchNumberofPages(db_name, name, type, times) {
   if (
     type == "" ||
-    type == "All Media Items" ||
+    type == "All" ||
     (type.length == 0 && times.length == 0 && name.length == 0)
   ) {
     const query = `SELECT * FROM ${db_name} WHERE name LIKE '%${name}%' ORDER BY created_on ${
@@ -205,9 +197,11 @@ export async function uploadImage(uniquename, name, type) {
 }
 
 export async function deleteImages(data) {
-  const query = `DELETE FROM media WHERE uniquefilename IN (?)`;
+  const filteredArray = data.filter((val) => val !== null);
+  const placeholders = filteredArray.map(() => "?").join(",");
+  const query = `DELETE FROM media WHERE uniquefilename IN (${placeholders})`;
   try {
-    await queryAsync(query, [data]);
+    await queryAsync(query, filteredArray);
   } catch (error) {
     console.error("Error deleting images:", error);
     return null;
@@ -217,9 +211,12 @@ export async function deleteImages(data) {
 }
 
 export async function deleteCategoryData(data, unique_name) {
-  const query = `DELETE FROM ${unique_name} WHERE id IN (?)`;
+  const filteredArray = data.filter((val) => val !== null);
+  const placeholders = filteredArray.map(() => "?").join(",");
+  const query = `DELETE FROM ${unique_name} WHERE id IN (${placeholders})`;
+
   try {
-    await queryAsync(query, data);
+    await queryAsync(query, filteredArray);
   } catch (error) {
     console.error("Error deleting category data:", error);
     return null;
@@ -229,7 +226,7 @@ export async function deleteCategoryData(data, unique_name) {
 }
 
 export async function deletePages(data, unique_name) {
-  const filteredArray = data.filter((value) => value !== null);
+  const filteredArray = data.filter((val) => val !== null);
   const placeholders = filteredArray.map(() => "?").join(",");
   const query = `DELETE FROM ${unique_name} WHERE id IN (${placeholders})`;
   try {
@@ -241,18 +238,47 @@ export async function deletePages(data, unique_name) {
   revalidatePath(`/${unique_name}/list-of-${unique_name}`);
 }
 
+export async function deleteForms(data) {
+  const filteredArray = data.filter((val) => val !== null);
+  const placeholders = filteredArray.map(() => "?").join(",");
+  const query1 = `DELETE FROM form_data WHERE id IN (${placeholders})`;
+  const query2 = `DELETE FROM forms WHERE id IN (${placeholders})`;
+  try {
+    await queryAsync(query1, filteredArray);
+    await queryAsync(query2, filteredArray);
+  } catch (error) {
+    console.error("Error deleting pages:", error);
+    return null;
+  }
+  revalidatePath(`/dashboard/forms`);
+}
+
 export async function mutateStatus(data, value, unique_name) {
-  const filteredArray = data.filter((value) => value !== null);
+  const filteredArray = data.filter((val) => val !== null);
   const placeholders = filteredArray.map(() => "?").join(",");
   const query = `UPDATE ${unique_name} SET status = ? WHERE id IN (${placeholders})`;
   try {
-    await queryAsync(query, [value, filteredArray]);
+    await queryAsync(query, [value, ...filteredArray]);
   } catch (error) {
     console.error("Error mutating status:", error);
     return null;
   }
 
   revalidatePath(`/dashboard/${unique_name}/list-of-${unique_name}`);
+}
+
+export async function mutateRole(data, value, unique_name) {
+  const filteredArray = data.filter((val) => val !== null);
+  const placeholders = filteredArray.map(() => "?").join(",");
+  const query = `UPDATE ${unique_name} SET role = ? WHERE id IN (${placeholders})`;
+  try {
+    await queryAsync(query, [value, ...filteredArray]);
+  } catch (error) {
+    console.error("Error mutating status:", error);
+    return null;
+  }
+
+  revalidatePath(`/dashboard/users`);
 }
 
 export async function getUser(email) {
@@ -753,16 +779,6 @@ export async function getOTP(email) {
   }
 }
 
-export async function operations(id, operation, table_name) {
-  if (operation == "Delete") {
-    deletePages([id], table_name);
-  } else if (operation == "Draft") {
-    mutateStatus(id, operation, table_name);
-  } else if (operation == "Publish") {
-    mutateStatus(id, "Published", table_name);
-  }
-}
-
 export async function insertUser(data) {
   const { firstName, lastName, email, password, role } = data;
   try {
@@ -776,14 +792,23 @@ export async function insertUser(data) {
   }
 }
 
-export async function fetchAllUsers() {
+export async function fetchAllUsers(currentPage) {
+  const offset = currentPage * USERS_PER_PAGE;
+  const query1 = `SELECT * FROM users LIMIT ? OFFSET ?`;
+  const query2 = "SELECT * FROM users ";
   try {
-    const query = "SELECT * FROM users";
-    const results = await queryAsync(query, []);
+    const results1 = await queryAsync(query1, [
+      USERS_PER_PAGE.toString(),
+      offset.toString(),
+    ]);
+    const results2 = await queryAsync(query2);
+    const parsedResults = JSON.parse(results2);
+    const totalPages = Math.ceil(Number(parsedResults.length) / USERS_PER_PAGE);
 
-    return results;
+    return [results1, totalPages];
   } catch (e) {
-    console.log(e);
+    console.error("Error fetching all users:", error);
+    return null;
   }
 }
 
@@ -837,10 +862,20 @@ export async function storeFormData(formName, fields) {
   return { success: true };
 }
 
-export async function fetchAllForms() {
+export async function fetchAllForms(currentPage) {
+  const offset = currentPage * FORMS_PER_PAGE;
+  const query1 = "SELECT id, form_name FROM forms LIMIT ? OFFSET ?";
+  const query2 = "SELECT id, form_name FROM forms";
+
   try {
-    const query = "SELECT id, form_name FROM forms";
-    return await queryAsync(query, []);
+    const results1 = await queryAsync(query1, [
+      FORMS_PER_PAGE.toString(),
+      offset.toString(),
+    ]);
+    const results2 = await queryAsync(query2);
+    const parsedResults = JSON.parse(results2);
+    const totalPages = Math.ceil(Number(parsedResults.length) / FORMS_PER_PAGE);
+    return [results1, totalPages];
   } catch (e) {
     console.error("Error fetching all forms:", e);
     return { success: false };

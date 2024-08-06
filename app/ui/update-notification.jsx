@@ -24,7 +24,6 @@ export default function UpdateNotification() {
     };
 
     websocket.onmessage = (event) => {
-      console.log(event.data);
       if (typeof event.data === "string") {
         try {
           const data = JSON.parse(event.data);

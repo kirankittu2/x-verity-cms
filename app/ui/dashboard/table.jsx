@@ -20,7 +20,7 @@ export default async function Table() {
               Date & Time
             </th>
             <th className="text-left p-5">Author</th>
-            <th className="text-left p-5"></th>
+            {/* <th className="text-left p-5"></th> */}
           </tr>
         </thead>
         <tbody className="text-15-black activity-table-body">

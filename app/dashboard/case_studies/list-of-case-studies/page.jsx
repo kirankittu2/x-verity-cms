@@ -1,8 +1,4 @@
-import {
-  fetchPageNumber,
-  retrieveAll,
-  retrieveCategories,
-} from "@/app/lib/data";
+import { retrieveAll, retrieveCategories } from "@/app/lib/data";
 import Table from "@/app/ui/articles/table";
 import CreateNew from "@/app/ui/create-new";
 import Filter from "@/app/ui/filter";
@@ -11,21 +7,22 @@ import NavBar from "@/app/ui/nav-bar";
 import { Suspense } from "react";
 
 export default async function ListOfCaseStudies({ searchParams }) {
-  const table_name = "case_studies"
+  const table_name = "case_studies";
   const imageTitle = searchParams?.title || "";
   const imageType = searchParams?.type || "";
-  const imageTime = searchParams?.time || "";
+  const Status = searchParams?.status || "";
   const currentPage = searchParams?.page || 1;
 
-  const data = JSON.parse(await retrieveAll(
-    table_name,
-    imageTitle,
-    imageType,
-    imageTime,
-    currentPage - 1
-  ));
+  const data = JSON.parse(
+    await retrieveAll(
+      table_name,
+      imageTitle,
+      imageType,
+      Status,
+      currentPage - 1
+    )
+  );
   const categories = await retrieveCategories(table_name);
-
 
   return (
     <div className="flex flex-col h-full">

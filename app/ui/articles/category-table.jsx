@@ -4,7 +4,7 @@ import SelectBlack from "@/app/ui/select-black";
 import Mutation from "@/app/ui/mutation";
 import { useState } from "react";
 import Button from "../button";
-import { operations } from "@/app/lib/data";
+import { operations } from "@/app/lib/utils";
 
 export default function CategoryTable({ totaldata, totalPages, unique_name }) {
   const [categoryID, storecategoryID] = useState([]);
@@ -28,7 +28,7 @@ export default function CategoryTable({ totaldata, totalPages, unique_name }) {
     ).textContent;
 
     if (operation != "Select Option") {
-      await operations(id, operation, unique_name);
+      await operations([id], operation, unique_name);
     }
   }
 

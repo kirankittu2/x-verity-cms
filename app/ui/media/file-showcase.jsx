@@ -7,6 +7,8 @@ import { redirect, usePathname, useSearchParams } from "next/navigation";
 import Link from "next/link";
 
 export default function FileShowCase({ files, totalPages }) {
+  const pathname = usePathname();
+  const searchParams = useSearchParams();
   const [imageID, storeImageID] = useState([]);
   const dropdownData = ["Delete"];
   const imageTypes = [
@@ -32,13 +34,32 @@ export default function FileShowCase({ files, totalPages }) {
     }
   }
 
-  const pathname = usePathname();
-  const searchParams = useSearchParams();
   function imageURL(id) {
     const params = new URLSearchParams(searchParams);
     params.set("item", id);
     return `${pathname}?${params.toString()}`;
   }
+
+  function handleCheckBox(event) {
+    const allChecks = document.querySelectorAll(".check");
+
+    if (event.target.checked) {
+      const newIDs = [];
+      allChecks.forEach((check) => {
+        check.checked = true;
+        const id = check.getAttribute("data-option");
+        newIDs.push(id);
+      });
+      storeImageID(newIDs);
+    } else {
+      allChecks.forEach((check) => {
+        check.checked = false;
+        storeImageID([]);
+      });
+    }
+  }
+
+  console.log(imageID);
 
   return (
     <div>
@@ -46,7 +67,7 @@ export default function FileShowCase({ files, totalPages }) {
         <input
           className="border border-[#EBEBEB] mr-2"
           type="checkbox"
-          // onClick={selectAllToggle}
+          onClick={handleCheckBox}
         />
         <h2 className="text-15-grey mb-[-3px]">Select All</h2>
       </div>
@@ -58,17 +79,14 @@ export default function FileShowCase({ files, totalPages }) {
               <div
                 key={index}
                 className="w-[150px] h-[150px] m-2 relative group cursor-pointer">
+                <input
+                  className="mr-2 absolute top-[10px] left-[10px] accent-black z-20 check"
+                  onChange={checkBoxData}
+                  data-option={file.uniquefilename}
+                  type="checkbox"
+                  checked={imageID.includes(file.uniquefilename) ? true : false}
+                />
                 <Link href={imageURL(file.id)}>
-                  <input
-                    className="mr-2 absolute top-[10px] left-[10px] accent-black "
-                    onChange={checkBoxData}
-                    data-option={file.uniquefilename}
-                    type="checkbox"
-                    checked={
-                      imageID.includes(file.uniquefilename) ? true : false
-                    }
-                  />
-
                   {imageTypes.includes(file.type) ? (
                     <Image
                       className="object-cover"

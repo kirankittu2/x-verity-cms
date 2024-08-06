@@ -22,7 +22,6 @@ import bcrypt from "bcryptjs";
 import { exec, execFile } from "child_process";
 import path from "path";
 import { z } from "zod";
-// import WebSocket from "ws";
 import { headers } from "next/headers";
 
 const env = process.env.NODE_ENV || "development";
@@ -35,7 +34,6 @@ if (env === "development") {
 export async function authenticate(prevState, formData) {
   const headersList = headers();
   const referer = headersList.get("X-Forwarded-Host");
-  console.log(referer);
 
   try {
     await signIn("credentials", formData);
@@ -287,6 +285,8 @@ export async function createUser(formData) {
   if (parsedCredentials.success) {
     await insertUser(parsedCredentials.data);
   }
+
+  revalidatePath("/dashboard/users");
 }
 
 export async function deleteForm(formData) {

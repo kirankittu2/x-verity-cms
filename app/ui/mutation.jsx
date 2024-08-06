@@ -42,6 +42,16 @@ export default function Mutation({
       storeImageID([]);
       mutateDBData(name, value, mutateData, unique_name);
     }
+
+    if (value == "Admin") {
+      storeImageID([]);
+      mutateDBData(name, value, mutateData, unique_name);
+    }
+
+    if (value == "Employee") {
+      storeImageID([]);
+      mutateDBData(name, value, mutateData, unique_name);
+    }
   }
 
   return (

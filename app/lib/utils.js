@@ -1,5 +1,10 @@
 import { unstable_noStore as noStore } from "next/cache";
-import { fetchCurrentVersion, mutateStatus } from "./data";
+import {
+  deleteForms,
+  fetchCurrentVersion,
+  mutateRole,
+  mutateStatus,
+} from "./data";
 import { deleteCategoryData, deletePages, deleteImages } from "@/app/lib/data";
 
 export function generatePagination(currentPage, totalPages) {
@@ -102,6 +107,53 @@ export async function mutateDBData(name, value, mutateData, unique_name) {
       value = "Published";
       mutateStatus(mutateData, value, unique_name);
     }
+  }
+
+  if (name == "users") {
+    if (value == "Delete") {
+      deletePages(mutateData, unique_name);
+    }
+
+    if (value == "Admin") {
+      mutateRole(mutateData, value, unique_name);
+    }
+
+    if (value == "Employee") {
+      mutateRole(mutateData, value, unique_name);
+    }
+  }
+
+  if (name == "forms") {
+    if (value == "Delete") {
+      deleteForms(mutateData);
+    }
+  }
+}
+
+export async function operations(id, operation, table_name) {
+  if (operation == "Delete") {
+    deletePages(id, table_name);
+  }
+
+  if (operation == "Draft") {
+    mutateStatus(id, operation, table_name);
+  }
+
+  if (operation == "Publish") {
+    mutateStatus(id, "Published", table_name);
+  }
+
+  if (operation == "Admin") {
+    mutateRole(id, operation, table_name);
+  }
+
+  if (operation == "Employee") {
+    mutateRole(id, operation, table_name);
+  }
+}
+export async function formOperations(id, operation) {
+  if (operation == "Delete") {
+    deleteForms(id);
   }
 }
 

@@ -25,7 +25,7 @@ export default async function Media({ searchParams }) {
     <>
       <BrowseFiles />
       <Suspense>
-        <Filter first={JSON.parse(types)} page="media" />
+        <Filter main="File" first={JSON.parse(types)} page="media" />
       </Suspense>
       <FileShowCase files={files[0]} totalPages={files[1]} />
       {currentItem !== "" && <ImagePopup item={imagedata} />}

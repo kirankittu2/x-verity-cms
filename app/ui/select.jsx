@@ -62,7 +62,7 @@ export default function Select({ data, name }) {
           {name == "image_types" && (
             <div
               key="all"
-              data-option="All Media Items"
+              data-option="All"
               className="h-[48px] hover:bg-black hover:text-white text-15-black flex items-center p-[1.24rem] border-b border-[#DCDCDC]"
               onClick={updateValue}>
               All
@@ -70,15 +70,17 @@ export default function Select({ data, name }) {
           )}
           {data &&
             data.map((item) => {
-              return (
-                <div
-                  key={item.type}
-                  data-option={item.type}
-                  className="h-[48px] hover:bg-black hover:text-white text-15-black flex items-center p-[1.24rem] border-b border-[#DCDCDC]"
-                  onClick={updateValue}>
-                  {item.type}
-                </div>
-              );
+              if (item.type && item.type.length > 0) {
+                return (
+                  <div
+                    key={item.type}
+                    data-option={item.type}
+                    className="h-[48px] hover:bg-black hover:text-white text-15-black flex items-center p-[1.24rem] border-b border-[#DCDCDC]"
+                    onClick={updateValue}>
+                    {item.type}
+                  </div>
+                );
+              }
             })}
         </div>
       )}

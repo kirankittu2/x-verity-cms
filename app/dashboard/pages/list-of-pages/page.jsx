@@ -10,7 +10,7 @@ export default async function ListOfPages({ searchParams }) {
   const table_name = "pages";
   const imageTitle = searchParams?.title || "";
   const imageType = searchParams?.type || "";
-  const imageTime = searchParams?.time || "";
+  const Status = searchParams?.status || "";
   const currentPage = searchParams?.page || 1;
 
   const data = JSON.parse(
@@ -18,7 +18,7 @@ export default async function ListOfPages({ searchParams }) {
       table_name,
       imageTitle,
       imageType,
-      imageTime,
+      Status,
       currentPage - 1
     )
   );

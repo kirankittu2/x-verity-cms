@@ -6,7 +6,7 @@ import Link from "next/link";
 import { useState } from "react";
 import DateTable from "../date";
 import Button from "../button";
-import { operations } from "@/app/lib/data";
+import { operations } from "@/app/lib/utils";
 
 export default function Table({ totaldata, totalPages, unique_name }) {
   const [articleID, storeArticleID] = useState([]);
@@ -49,7 +49,7 @@ export default function Table({ totaldata, totalPages, unique_name }) {
     ).textContent;
 
     if (operation != "Select Option") {
-      await operations([id], operation, unique_name);
+      operations([id], operation, unique_name);
     }
   }
 
